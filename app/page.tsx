@@ -1,101 +1,77 @@
-import Image from 'next/image';
+import { Cloud, Server } from 'lucide-react';
+
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import KeyFeatures from '@/components/KeyFeatures';
+import Pricing from '@/components/Pricing';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
-    <div className='grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20'>
-      <main className='row-start-2 flex flex-col items-center gap-8 sm:items-start'>
-        <Image
-          className='dark:invert'
-          src='/next.svg'
-          alt='Next.js logo'
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className='list-inside list-decimal text-center font-[family-name:var(--font-geist-mono)] text-sm sm:text-left'>
-          <li className='mb-2'>
-            Get started by editing{' '}
-            <code className='rounded bg-black/[.05] px-1 py-0.5 font-semibold dark:bg-white/[.06]'>
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className='flex min-h-screen flex-col'>
+      <Header />
+      <main className='flex-1'>
+        <section className='w-full bg-blue-50 py-12 md:py-24 lg:py-32 xl:py-48'>
+          <div className='container mx-auto px-4 md:px-6'>
+            <div className='flex flex-col items-center space-y-4 text-center'>
+              <div className='space-y-2'>
+                <h1 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none'>
+                  Design Any Database with Ease
+                </h1>
+                <p className='mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl'>
+                  Create, collaborate, and share your database schemas
+                  effortlessly with our intuitive ER diagram tool. Support for
+                  both SQL and NoSQL databases.
+                </p>
+              </div>
+              <div className='space-x-4'>
+                <Button className='bg-blue-600 text-white duration-300 hover:bg-blue-700'>
+                  Get Started
+                </Button>
+                <Button
+                  variant='outline'
+                  className='duration-300'
+                >
+                  Learn More
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <div className='flex flex-col items-center gap-4 sm:flex-row'>
-          <a
-            className='flex h-10 items-center justify-center gap-2 rounded-full border border-solid border-transparent bg-foreground px-4 text-sm text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] sm:h-12 sm:px-5 sm:text-base'
-            href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <Image
-              className='dark:invert'
-              src='/vercel.svg'
-              alt='Vercel logomark'
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className='flex h-10 items-center justify-center rounded-full border border-solid border-black/[.08] px-4 text-sm transition-colors hover:border-transparent hover:bg-[#f2f2f2] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] sm:h-12 sm:min-w-44 sm:px-5 sm:text-base'
-            href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Read our docs
-          </a>
-        </div>
+        <KeyFeatures />
+
+        <section className='w-full bg-gray-50 py-12 md:py-24 lg:py-32'>
+          <div className='container mx-auto px-4 md:px-6'>
+            <h2 className='mb-12 text-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl'>
+              Supports All Major Database Types
+            </h2>
+            <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
+              <div className='flex flex-col items-center rounded-lg bg-white p-6 shadow-lg'>
+                <Server className='mb-4 h-12 w-12 text-blue-600' />
+                <h3 className='mb-2 text-2xl font-bold'>SQL Databases</h3>
+                <p className='text-center text-gray-500'>
+                  Design schemas for relational databases like MySQL,
+                  PostgreSQL, Oracle, and Microsoft SQL Server.
+                </p>
+              </div>
+              <div className='flex flex-col items-center rounded-lg bg-white p-6 shadow-lg'>
+                <Cloud className='mb-4 h-12 w-12 text-blue-600' />
+                <h3 className='mb-2 text-2xl font-bold'>NoSQL Databases</h3>
+                <p className='text-center text-gray-500'>
+                  Create flexible schemas for document stores, key-value
+                  databases, and graph databases like MongoDB, Cassandra, and
+                  Neo4j.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <Pricing />
+
+        <Footer />
       </main>
-      <footer className='row-start-3 flex flex-wrap items-center justify-center gap-6'>
-        <a
-          className='flex items-center gap-2 hover:underline hover:underline-offset-4'
-          href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <Image
-            aria-hidden
-            src='/file.svg'
-            alt='File icon'
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className='flex items-center gap-2 hover:underline hover:underline-offset-4'
-          href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <Image
-            aria-hidden
-            src='/window.svg'
-            alt='Window icon'
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className='flex items-center gap-2 hover:underline hover:underline-offset-4'
-          href='https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <Image
-            aria-hidden
-            src='/globe.svg'
-            alt='Globe icon'
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
