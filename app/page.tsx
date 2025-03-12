@@ -1,77 +1,115 @@
-import { Cloud, Server } from 'lucide-react';
+import {
+  Code2,
+  Database,
+  GitBranch,
+  Layers,
+  RefreshCw,
+  Shield,
+  Terminal,
+  Workflow,
+  Zap
+} from 'lucide-react';
 
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import KeyFeatures from '@/components/KeyFeatures';
-import Pricing from '@/components/Pricing';
-import { Button } from '@/components/ui/button';
+import FeatureCard from '@/components/landingPage/FeatureCard';
+import LandingFooter from '@/components/landingPage/LandingFooter';
+import LandingHeader from '@/components/landingPage/LandingHeader';
+import WorkflowStep from '@/components/landingPage/WorkflowStep';
 
 export default function Home() {
   return (
-    <div className='flex min-h-screen flex-col'>
-      <Header />
-      <main className='flex-1'>
-        <section className='w-full bg-blue-50 py-12 md:py-24 lg:py-32 xl:py-48'>
-          <div className='container mx-auto px-4 md:px-6'>
-            <div className='flex flex-col items-center space-y-4 text-center'>
-              <div className='space-y-2'>
-                <h1 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none'>
-                  Design Any Database with Ease
-                </h1>
-                <p className='mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl'>
-                  Create, collaborate, and share your database schemas
-                  effortlessly with our intuitive ER diagram tool. Support for
-                  both SQL and NoSQL databases.
-                </p>
-              </div>
-              <div className='space-x-4'>
-                <Button className='bg-blue-600 text-white duration-300 hover:bg-blue-700'>
-                  Get Started
-                </Button>
-                <Button
-                  variant='outline'
-                  className='duration-300'
-                >
-                  Learn More
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
+    <div className='min-h-screen'>
+      <LandingHeader />
+      {/* Features Section */}
+      <section
+        id='features'
+        className='container mx-auto px-6 py-24'
+      >
+        <h2 className='mb-16 text-center text-3xl font-bold text-white'>
+          Everything you need to build better schemas
+        </h2>
+        <div className='grid gap-8 md:grid-cols-3'>
+          <FeatureCard
+            icon={<Layers className='h-8 w-8 text-blue-500' />}
+            title='Visual Schema Design'
+            description='Drag-and-drop interface for creating and modifying MongoDB schemas with real-time validation.'
+          />
+          <FeatureCard
+            icon={<Zap className='h-8 w-8 text-blue-500' />}
+            title='Performance Insights'
+            description='Get instant feedback on schema optimization and query performance recommendations.'
+          />
+          <FeatureCard
+            icon={<Shield className='h-8 w-8 text-blue-500' />}
+            title='Data Security'
+            description='Built-in security best practices and validation rules to protect your data.'
+          />
+          <FeatureCard
+            icon={<Code2 className='h-8 w-8 text-blue-500' />}
+            title='Code Generation'
+            description='Export schemas to MongoDB-native code, Mongoose models, or TypeScript interfaces.'
+          />
+          <FeatureCard
+            icon={<GitBranch className='h-8 w-8 text-blue-500' />}
+            title='Version Control'
+            description='Track schema changes and collaborate with team members using built-in versioning.'
+          />
+          <FeatureCard
+            icon={<Database className='h-8 w-8 text-blue-500' />}
+            title='Database Migration'
+            description='Generate migration scripts and safely deploy schema changes to production.'
+          />
+        </div>
+      </section>
 
-        <KeyFeatures />
+      {/* How It Works Section */}
+      <section
+        id='how-it-works'
+        className='container mx-auto border-t border-gray-800 px-6 py-24'
+      >
+        <h2 className='mb-16 text-center text-3xl font-bold text-white'>
+          How SchemaForge Works
+        </h2>
+        <div className='grid gap-8 md:grid-cols-4'>
+          <WorkflowStep
+            icon={<Terminal className='h-8 w-8 text-blue-500' />}
+            number={1}
+            title='Connect'
+            description='Connect to your existing MongoDB instance or start fresh with a new project.'
+          />
+          <WorkflowStep
+            icon={<Workflow className='h-8 w-8 text-blue-500' />}
+            number={2}
+            title='Design'
+            description='Use our visual editor to design your schema with drag-and-drop simplicity.'
+          />
+          <WorkflowStep
+            icon={<RefreshCw className='h-8 w-8 text-blue-500' />}
+            number={3}
+            title='Validate'
+            description='Get real-time validation and performance insights as you build.'
+          />
+          <WorkflowStep
+            icon={<Code2 className='h-8 w-8 text-blue-500' />}
+            number={4}
+            title='Deploy'
+            description='Generate production-ready code and deploy with confidence.'
+          />
+        </div>
+      </section>
 
-        <section className='w-full bg-gray-50 py-12 md:py-24 lg:py-32'>
-          <div className='container mx-auto px-4 md:px-6'>
-            <h2 className='mb-12 text-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl'>
-              Supports All Major Database Types
-            </h2>
-            <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
-              <div className='flex flex-col items-center rounded-lg bg-white p-6 shadow-lg'>
-                <Server className='mb-4 h-12 w-12 text-blue-600' />
-                <h3 className='mb-2 text-2xl font-bold'>SQL Databases</h3>
-                <p className='text-center text-gray-500'>
-                  Design schemas for relational databases like MySQL,
-                  PostgreSQL, Oracle, and Microsoft SQL Server.
-                </p>
-              </div>
-              <div className='flex flex-col items-center rounded-lg bg-white p-6 shadow-lg'>
-                <Cloud className='mb-4 h-12 w-12 text-blue-600' />
-                <h3 className='mb-2 text-2xl font-bold'>NoSQL Databases</h3>
-                <p className='text-center text-gray-500'>
-                  Create flexible schemas for document stores, key-value
-                  databases, and graph databases like MongoDB, Cassandra, and
-                  Neo4j.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <Pricing />
-
-        <Footer />
-      </main>
+      {/* CTA Section */}
+      <section className='container mx-auto px-6 py-24 text-center'>
+        <h2 className='mb-6 text-4xl font-bold text-white'>
+          Ready to build better schemas?
+        </h2>
+        <p className='mb-8 text-xl text-gray-300'>
+          Start your free 14-day trial today. No credit card required.
+        </p>
+        <button className='rounded-lg bg-blue-500 px-8 py-3 text-lg font-semibold text-white transition hover:bg-blue-600'>
+          Get Started Now
+        </button>
+      </section>
+      <LandingFooter />
     </div>
   );
 }
