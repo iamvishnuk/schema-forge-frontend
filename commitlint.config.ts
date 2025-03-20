@@ -24,7 +24,8 @@ const Configuration: UserConfig = {
     'type-case': [2, 'always', 'lower-case'],
     'type-empty': [2, 'never'],
     'subject-empty': [2, 'never'],
-    'subject-max-length': [2, 'always', 100]
+    'subject-max-length': [2, 'always', 200],
+    'header-max-length': [2, 'always', 200]
   }
 };
 
