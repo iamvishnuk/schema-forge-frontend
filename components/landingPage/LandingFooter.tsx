@@ -2,6 +2,8 @@ import { Database } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
+import ModeToggle from '../ModeToggle';
+
 const LandingFooter = () => {
   return (
     <footer className='border-t border-gray-800'>
@@ -10,19 +12,21 @@ const LandingFooter = () => {
           <div>
             <div className='mb-4 flex items-center space-x-2'>
               <Database className='h-6 w-6 text-blue-500' />
-              <span className='text-xl font-bold text-white'>SchemaForge</span>
+              <span className='text-xl font-bold dark:text-white'>
+                SchemaForge
+              </span>
             </div>
-            <p className='text-gray-400'>
+            <p className='text-gray-600 dark:text-gray-400'>
               Building better MongoDB schemas for modern applications.
             </p>
           </div>
           <div>
-            <h3 className='mb-4 font-semibold text-white'>Product</h3>
+            <h3 className='mb-4 font-semibold dark:text-white'>Product</h3>
             <ul className='space-y-2'>
               <li>
                 <Link
                   href='#features'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Features
                 </Link>
@@ -30,7 +34,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#pricing'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Pricing
                 </Link>
@@ -38,7 +42,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Documentation
                 </Link>
@@ -54,12 +58,12 @@ const LandingFooter = () => {
             </ul>
           </div>
           <div>
-            <h3 className='mb-4 font-semibold text-white'>Company</h3>
+            <h3 className='mb-4 font-semibold dark:text-white'>Company</h3>
             <ul className='space-y-2'>
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   About
                 </Link>
@@ -67,7 +71,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Blog
                 </Link>
@@ -75,7 +79,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Careers
                 </Link>
@@ -83,7 +87,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Contact
                 </Link>
@@ -91,12 +95,12 @@ const LandingFooter = () => {
             </ul>
           </div>
           <div>
-            <h3 className='mb-4 font-semibold text-white'>Legal</h3>
+            <h3 className='mb-4 font-semibold dark:text-white'>Legal</h3>
             <ul className='space-y-2'>
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Privacy
                 </Link>
@@ -104,7 +108,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Terms
                 </Link>
@@ -112,7 +116,7 @@ const LandingFooter = () => {
               <li>
                 <Link
                   href='#'
-                  className='text-gray-400 transition hover:text-white'
+                  className='text-gray-600 transition hover:text-black dark:text-gray-400 dark:hover:text-white'
                 >
                   Security
                 </Link>
@@ -120,10 +124,11 @@ const LandingFooter = () => {
             </ul>
           </div>
         </div>
-        <div className='border-t border-gray-800 pt-8'>
-          <p className='text-gray-400'>
+        <div className='flex justify-between border-t border-gray-800 pt-8'>
+          <p className='text-gray-600 dark:text-gray-400'>
             © 2025 SchemaForge. All rights reserved.
           </p>
+          <ModeToggle />
         </div>
       </div>
     </footer>

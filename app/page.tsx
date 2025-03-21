@@ -24,7 +24,7 @@ export default function Home() {
         id='features'
         className='container mx-auto px-6 py-24'
       >
-        <h2 className='mb-16 text-center text-3xl font-bold text-white'>
+        <h2 className='mb-16 text-center text-3xl font-bold dark:text-white'>
           Everything you need to build better schemas
         </h2>
         <div className='grid gap-8 md:grid-cols-3'>
@@ -66,7 +66,7 @@ export default function Home() {
         id='how-it-works'
         className='container mx-auto border-t border-gray-800 px-6 py-24'
       >
-        <h2 className='mb-16 text-center text-3xl font-bold text-white'>
+        <h2 className='mb-16 text-center text-3xl font-bold dark:text-white'>
           How SchemaForge Works
         </h2>
         <div className='grid gap-8 md:grid-cols-4'>
@@ -99,13 +99,13 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className='container mx-auto px-6 py-24 text-center'>
-        <h2 className='mb-6 text-4xl font-bold text-white'>
+        <h2 className='mb-6 text-4xl font-bold dark:text-white'>
           Ready to build better schemas?
         </h2>
-        <p className='mb-8 text-xl text-gray-300'>
+        <p className='mb-8 text-xl text-gray-600 dark:text-gray-300'>
           Start your free 14-day trial today. No credit card required.
         </p>
-        <button className='rounded-lg bg-blue-500 px-8 py-3 text-lg font-semibold text-white transition hover:bg-blue-600'>
+        <button className='rounded-lg bg-gradient-to-b from-blue-500 to-blue-600 px-8 py-3 text-lg font-semibold text-white transition hover:cursor-pointer'>
           Get Started Now
         </button>
       </section>

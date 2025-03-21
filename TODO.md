@@ -11,6 +11,6 @@
 ## Frontend
 
 - [] Add return type of every mutation Fn
-- []
-- []
+- [x] Add them toggle
+- [x] change landing page ui
 - []

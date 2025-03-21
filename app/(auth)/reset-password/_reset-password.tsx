@@ -67,13 +67,15 @@ export default function ResetPassword() {
         <div className='h-full w-full rounded-md p-5'>
           <div className='flex items-center space-x-2'>
             <Database className='h-8 w-8 text-blue-500' />
-            <span className='text-2xl font-bold text-white'>SchemaForge</span>
+            <span className='text-2xl font-bold dark:text-white'>
+              SchemaForge
+            </span>
           </div>
 
-          <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] text-blue-500 sm:text-left dark:text-[#fcfdffef]'>
+          <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] sm:text-left dark:text-[#fcfdffef]'>
             Set up a new password
           </h1>
-          <p className='mb-6 text-center text-[15px] font-normal text-white sm:text-left dark:text-[#f1f7feb5]'>
+          <p className='mb-6 text-center text-[15px] font-normal sm:text-left dark:text-[#f1f7feb5]'>
             Your password must be different from your previous one.
           </p>
           <Form {...form}>
@@ -87,14 +89,14 @@ export default function ResetPassword() {
                   name='password'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                      <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                         New password
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder='Enter your password'
                           type='password'
-                          className='text-white'
+                          className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                           autoComplete='new-password'
                           {...field}
                         />
@@ -110,14 +112,14 @@ export default function ResetPassword() {
                   name='confirmPassword'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                      <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                         Confirm new password
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder='Enter your password again'
                           type='password'
-                          className='text-white'
+                          className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                           autoComplete='new-password'
                           {...field}
                         />
@@ -147,10 +149,10 @@ export default function ResetPassword() {
               className='animate-bounce text-red-500'
             />
           </div>
-          <h2 className='text-xl font-bold tracking-[-0.16px] text-blue-500 dark:text-[#fcfdffef]'>
+          <h2 className='text-xl font-bold tracking-[-0.16px] dark:text-[#fcfdffef]'>
             Invalid or expired reset link
           </h2>
-          <p className='mb-2 text-center text-sm font-normal text-white dark:text-[#f1f7feb5]'>
+          <p className='mb-2 text-center text-sm font-normal dark:text-[#f1f7feb5]'>
             You can request a new password reset link
           </p>
           <Link href='/forgot-password?email='>

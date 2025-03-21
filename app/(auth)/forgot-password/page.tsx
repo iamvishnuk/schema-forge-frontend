@@ -52,13 +52,15 @@ export default function ForgotPassword() {
         <div className='h-full w-full rounded-md p-5'>
           <div className='flex items-center space-x-2'>
             <Database className='h-8 w-8 text-blue-500' />
-            <span className='text-2xl font-bold text-white'>SchemaForge</span>
+            <span className='text-2xl font-bold dark:text-white'>
+              SchemaForge
+            </span>
           </div>
 
-          <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] text-blue-500 sm:text-left dark:text-[#fcfdffef]'>
+          <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] sm:text-left dark:text-[#fcfdffef]'>
             Reset password
           </h1>
-          <p className='mb-6 text-center text-base font-normal text-white sm:text-left dark:text-[#f1f7feb5]'>
+          <p className='mb-6 text-center text-base font-normal sm:text-left dark:text-[#f1f7feb5]'>
             Include the email address associated with your account and we’ll
             send you an email with instructions to reset your password.
           </p>
@@ -73,13 +75,13 @@ export default function ForgotPassword() {
                   name='email'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                      <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                         Email
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder='Enter your email'
-                          className='text-white'
+                          className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                           autoComplete='email'
                           {...field}
                         />

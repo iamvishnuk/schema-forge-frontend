@@ -125,15 +125,6 @@
   }
 }
 
-/* @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
-
 /*
   ---break---
 */
@@ -200,4 +191,17 @@
     #00002f26 90%,
     transparent 100%
   );
+}
+
+/* Dark mode gradient */
+@media (prefers-color-scheme: dark) {
+  .steps-gradient {
+    background: linear-gradient(
+      180deg,
+      transparent 0,
+      rgba(255, 255, 255, 0.1) 10%,
+      /* lighter color with transparency */ rgba(255, 255, 255, 0.1) 90%,
+      transparent 100%
+    );
+  }
 }
