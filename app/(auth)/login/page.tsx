@@ -39,6 +39,7 @@ export default function Login() {
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     mutate(values, {
       onSuccess: (response) => {
+        console.log('response', response);
         if (response.data.data?.mfaRequired) {
           router.push(`/verify-mfa?email=${values.email}`);
         } else {
@@ -57,13 +58,15 @@ export default function Login() {
       <div className='h-full w-full rounded-md p-5'>
         <div className='flex items-center space-x-2'>
           <Database className='h-8 w-8 text-blue-500' />
-          <span className='text-2xl font-bold text-white'>SchemaForge</span>
+          <span className='text-2xl font-bold dark:text-white'>
+            SchemaForge
+          </span>
         </div>
 
-        <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] text-blue-500 sm:text-left dark:text-[#fcfdffef]'>
+        <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] sm:text-left dark:text-[#fcfdffef]'>
           Log in to Schema Forge
         </h1>
-        <p className='mb-8 text-center text-base font-normal text-white sm:text-left dark:text-[#f1f7feb5]'>
+        <p className='mb-8 text-center text-base font-normal sm:text-left dark:text-[#f1f7feb5]'>
           Don't have an account?{' '}
           <Link
             className='text-blue-500 hover:underline'
@@ -81,13 +84,13 @@ export default function Login() {
                 name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                    <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                       Email
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Enter your email'
-                        className='text-white'
+                        className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                         autoComplete='email'
                         {...field}
                       />
@@ -109,7 +112,7 @@ export default function Login() {
                     <FormControl>
                       <Input
                         placeholder='••••••••••••'
-                        className='text-white'
+                        className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                         autoComplete='current-password'
                         type='password'
                         {...field}
@@ -145,7 +148,7 @@ export default function Login() {
                 data-orientation='horizontal'
                 role='separator'
               ></div>
-              <span className='mx-4 text-xs font-normal text-white dark:text-[#f1f7feb5]'>
+              <span className='mx-4 text-xs font-normal dark:text-[#f1f7feb5]'>
                 OR
               </span>
               <div
@@ -163,7 +166,7 @@ export default function Login() {
         >
           Email magic link
         </Button>
-        <p className='dark:text-slate- mt-7 text-xs font-normal text-white'>
+        <p className='dark:text-slate- mt-7 text-xs font-normal dark:text-white'>
           By signing in, you agree to our{' '}
           <Link
             className='text-blue-500 hover:underline'

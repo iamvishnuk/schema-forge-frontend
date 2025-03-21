@@ -71,13 +71,15 @@ const VerifyMfa = () => {
       <div className='h-full w-full rounded-md p-5'>
         <div className='flex items-center space-x-2'>
           <Database className='h-8 w-8 text-blue-500' />
-          <span className='text-2xl font-bold text-white'>SchemaForge</span>
+          <span className='text-2xl font-bold dark:text-white'>
+            SchemaForge
+          </span>
         </div>
 
-        <h1 className='mt-8 text-center text-xl font-bold tracking-[-0.16px] text-blue-500 sm:text-left dark:text-[#fcfdffef]'>
+        <h1 className='mt-8 text-center text-xl font-bold tracking-[-0.16px] sm:text-left dark:text-[#fcfdffef]'>
           Multi-Factor Authentication
         </h1>
-        <p className='mb-6 text-center text-[15px] font-normal text-white sm:text-left dark:text-[#f1f7feb5]'>
+        <p className='mb-6 text-center text-[15px] font-normal sm:text-left dark:text-[#f1f7feb5]'>
           Enter the code from your authenticator app.
         </p>
 
@@ -92,7 +94,7 @@ const VerifyMfa = () => {
                 name='pin'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='mb-1 text-sm font-normal text-white'>
+                    <FormLabel className='mb-1 text-sm font-normal dark:text-white'>
                       One-time code
                     </FormLabel>
                     <FormControl>
@@ -106,31 +108,31 @@ const VerifyMfa = () => {
                         <InputOTPGroup>
                           <InputOTPSlot
                             index={0}
-                            className='!h-12 !w-14 !text-lg text-white'
+                            className='!h-12 !w-14 !text-lg text-white focus-within:ring-2 focus-within:ring-blue-500'
                           />
                           <InputOTPSlot
                             index={1}
-                            className='!h-12 !w-14 !text-lg text-white'
+                            className='!h-12 !w-14 !text-lg text-white focus-within:ring-2 focus-within:ring-blue-500'
                           />
                         </InputOTPGroup>
                         <InputOTPGroup>
                           <InputOTPSlot
                             index={2}
-                            className='!h-12 !w-14 !text-lg text-white'
+                            className='!h-12 !w-14 !text-lg text-white focus-within:ring-2 focus-within:ring-blue-500'
                           />
                           <InputOTPSlot
                             index={3}
-                            className='!h-12 !w-14 !text-lg text-white'
+                            className='!h-12 !w-14 !text-lg text-white focus-within:ring-2 focus-within:ring-blue-500'
                           />
                         </InputOTPGroup>
                         <InputOTPGroup>
                           <InputOTPSlot
                             index={4}
-                            className='!h-12 !w-14 !text-lg text-white'
+                            className='!h-12 !w-14 !text-lg text-white focus-within:ring-2 focus-within:ring-blue-500'
                           />
                           <InputOTPSlot
                             index={5}
-                            className='!h-12 !w-14 !text-lg text-white'
+                            className='!h-12 !w-14 !text-lg text-white focus-within:ring-2 focus-within:ring-blue-500'
                           />
                         </InputOTPGroup>
                       </InputOTP>
@@ -155,7 +157,7 @@ const VerifyMfa = () => {
         <Button
           onClick={() => router.push('/login')}
           variant='ghost'
-          className='mt-2 h-[40px] w-full text-[15px] text-white hover:cursor-pointer hover:text-blue-500'
+          className='mt-2 h-[40px] w-full text-[15px] hover:cursor-pointer hover:bg-blue-100 dark:hover:text-blue-500'
         >
           Return to sign in
         </Button>

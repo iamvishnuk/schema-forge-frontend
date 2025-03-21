@@ -5,6 +5,7 @@ import { Geist, Roboto } from 'next/font/google';
 
 import { Toaster } from '@/components/ui/sonner';
 import QueryProvider from '@/context/query-provider';
+import { ThemeProvider } from '@/context/theme-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,11 +31,18 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${geistSans.variable} ${roboto.variable} overflow-x-hidden bg-linear-to-b from-slate-900 to-slate-800 antialiased`}
+        className={`${geistSans.variable} ${roboto.variable} overflow-x-hidden antialiased`}
         suppressHydrationWarning
       >
-        <QueryProvider>{children}</QueryProvider>
-        <Toaster richColors />
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>{children}</QueryProvider>
+          <Toaster richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

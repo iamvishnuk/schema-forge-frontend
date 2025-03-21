@@ -58,17 +58,19 @@ export default function SignUp() {
           <div className='w-full rounded-md p-5'>
             <div className='flex items-center space-x-2'>
               <Database className='h-8 w-8 text-blue-500' />
-              <span className='text-2xl font-bold text-white'>SchemaForge</span>
+              <span className='text-2xl font-bold dark:text-white'>
+                SchemaForge
+              </span>
             </div>
 
-            <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] text-blue-500 sm:text-left dark:text-[#fcfdffef]'>
+            <h1 className='mt-8 mb-1.5 text-center text-xl font-bold tracking-[-0.16px] sm:text-left dark:text-[#fcfdffef]'>
               Create a Schema Forge account
             </h1>
-            <p className='mb-6 text-center text-base font-normal text-white sm:text-left dark:text-[#f1f7feb5]'>
+            <p className='mb-6 text-center text-base font-normal sm:text-left dark:text-[#f1f7feb5]'>
               Already have an account?{' '}
               <Link
                 className='text-blue-500'
-                href='/'
+                href='/login'
               >
                 Sign in
               </Link>
@@ -82,14 +84,14 @@ export default function SignUp() {
                     name='name'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                        <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                           Name
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder='Enter your name'
                             autoComplete='name'
-                            className='text-white'
+                            className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                             {...field}
                           />
                         </FormControl>
@@ -104,14 +106,14 @@ export default function SignUp() {
                     name='email'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                        <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                           Email
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder='Enter you email'
                             autoComplete='email'
-                            className='text-white'
+                            className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                             {...field}
                           />
                         </FormControl>
@@ -126,7 +128,7 @@ export default function SignUp() {
                     name='password'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                        <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                           Password
                         </FormLabel>
                         <FormControl>
@@ -134,7 +136,7 @@ export default function SignUp() {
                             placeholder='••••••••••••'
                             type='password'
                             autoComplete='new-password'
-                            className='text-white'
+                            className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                             {...field}
                           />
                         </FormControl>
@@ -149,7 +151,7 @@ export default function SignUp() {
                     name='confirmPassword'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm text-white dark:text-[#f1f7feb5]'>
+                        <FormLabel className='text-sm dark:text-[#f1f7feb5]'>
                           Confirm Password
                         </FormLabel>
                         <FormControl>
@@ -157,7 +159,7 @@ export default function SignUp() {
                             placeholder='••••••••••••'
                             type='password'
                             autoComplete='new-password'
-                            className='text-white'
+                            className='focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-white'
                             {...field}
                           />
                         </FormControl>
@@ -183,7 +185,7 @@ export default function SignUp() {
                     data-orientation='horizontal'
                     role='separator'
                   ></div>
-                  <span className='mx-4 text-xs font-normal text-white dark:text-[#f1f7feb5]'>
+                  <span className='mx-4 text-xs font-normal dark:text-[#f1f7feb5]'>
                     OR
                   </span>
                   <div
@@ -201,7 +203,7 @@ export default function SignUp() {
             >
               Email magic link
             </Button>
-            <p className='mt-4 text-xs font-normal text-white'>
+            <p className='mt-4 text-xs font-normal dark:text-white'>
               By signing up, you agree to our{' '}
               <Link
                 className='text-blue-500 hover:underline'
@@ -227,14 +229,14 @@ export default function SignUp() {
                 className='animate-bounce text-blue-600'
               />
             </div>
-            <h2 className='text-xl font-bold tracking-[-0.16px] text-white dark:text-[#fcfdffef]'>
+            <h2 className='text-xl font-bold tracking-[-0.16px] dark:text-[#fcfdffef]'>
               Check your email
             </h2>
-            <p className='mb-2 text-center text-sm font-normal text-white dark:text-[#f1f7feb5]'>
+            <p className='mb-2 text-center text-sm font-normal dark:text-[#f1f7feb5]'>
               We just sent a verification link to {form.getValues('email')}.
             </p>
             <Link href='/login'>
-              <Button className='h-[40px] bg-blue-500 hover:cursor-pointer hover:bg-blue-600'>
+              <Button className='h-[40px] bg-blue-500 hover:cursor-pointer hover:bg-blue-600 dark:text-white'>
                 Go to login
                 <ArrowRight />
               </Button>

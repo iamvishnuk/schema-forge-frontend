@@ -6,12 +6,16 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
+  Laptop,
   Lock,
   LogOut,
-  Sparkles
+  Moon,
+  Sparkles,
+  Sun
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -35,6 +39,7 @@ import { LogoutMutationFn } from '@/lib/api';
 
 export function NavUser() {
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
 
   const { isMobile } = useSidebar();
   const { user } = useAuthContext();
@@ -119,6 +124,34 @@ export function NavUser() {
               <DropdownMenuItem>
                 <CreditCard />
                 Billing
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <div className='flex cursor-default items-center gap-2'>
+                  {theme === 'light' && <Sun className='h-4 w-4' />}
+                  {theme === 'dark' && <Moon className='h-4 w-4' />}
+                  {theme === 'system' && <Laptop className='h-4 w-4' />}
+                  Theme
+                  <div className='ml-auto flex gap-1'>
+                    <button
+                      className='hover:bg-accent rounded p-1'
+                      onClick={() => setTheme('light')}
+                    >
+                      <Sun className='h-4 w-4' />
+                    </button>
+                    <button
+                      className='hover:bg-accent rounded p-1'
+                      onClick={() => setTheme('dark')}
+                    >
+                      <Moon className='h-4 w-4' />
+                    </button>
+                    <button
+                      className='hover:bg-accent rounded p-1'
+                      onClick={() => setTheme('system')}
+                    >
+                      <Laptop className='h-4 w-4' />
+                    </button>
+                  </div>
+                </div>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />
