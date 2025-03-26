@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, error, isLoading, isFetching, refetch } = useAuth();
 
-  const user = data?.data?.user;
+  const user = data?.data;
 
   return (
     <AuthContext.Provider

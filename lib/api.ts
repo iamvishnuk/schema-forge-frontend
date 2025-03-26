@@ -1,9 +1,12 @@
 import {
-  IGetAllSessionsRes,
+  APIResponse,
   ILogin,
+  ILoginResponse,
   IRegister,
   IResetPassword,
+  ISession,
   ISetUpMfaRes,
+  IUser,
   IVerifyMfa,
   IVerifyMfaAndLogin
 } from '@/definitions/interface';
@@ -11,8 +14,9 @@ import {
 import API from './axios-client';
 
 // <-------- AUTHENTICATION MUTATIONS -------->
-export const LoginMutationFn = async (data: ILogin) =>
-  await API.post('/auth/login', data);
+export const LoginMutationFn = async (
+  data: ILogin
+): Promise<APIResponse<ILoginResponse>> => await API.post('/auth/login', data);
 
 export const registerMutationFn = async (data: IRegister) =>
   await API.post('/auth/register', data);
@@ -30,18 +34,21 @@ export const ConfirmAccountMutationFn = async (data: { code: string }) =>
 export const LogoutMutationFn = async () => await API.post('/auth/logout');
 
 // <-------- SESSION MUTATIONS -------->
-export const getCurrentSessionMutationFn = async () =>
-  await API.get('/session/current');
+export const getCurrentSessionMutationFn = async (): Promise<
+  APIResponse<IUser>
+> => await API.get('/session/current');
 
-export const getAllSessionsMutationFn = async (): Promise<IGetAllSessionsRes> =>
-  await API.get('/session/all');
+export const getAllSessionsMutationFn = async (): Promise<
+  APIResponse<ISession[]>
+> => await API.get('/session/all');
 
 export const deleteSessionMutationFn = async (sessionId: string) =>
   await API.delete(`/session/${sessionId}`);
 
 // <-------- MFA MUTATIONS -------->
-export const setUpMfaMutationFn = async (): Promise<ISetUpMfaRes> =>
-  await API.get('/mfa/setup');
+export const setUpMfaMutationFn = async (): Promise<
+  APIResponse<ISetUpMfaRes>
+> => await API.get('/mfa/setup');
 
 export const verifyMafMutationFn = async (data: IVerifyMfa) =>
   await API.post('/mfa/verify', data);

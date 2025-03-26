@@ -18,7 +18,7 @@ const Sessions = () => {
     mutationFn: deleteSessionMutationFn
   });
 
-  const sessions = data?.data.sessions || [];
+  const sessions = data?.data || [];
   const currentSession = sessions.find((session) => session.isCurrent);
   const otherSessions = sessions.filter((session) => !session.isCurrent);
 

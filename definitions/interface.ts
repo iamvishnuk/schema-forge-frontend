@@ -1,6 +1,21 @@
+export interface APIResponse<T> {
+  status: 'success' | 'error';
+  message: string;
+  data: T;
+  tokens?: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
+}
+
 export interface ILogin {
   email: string;
   password: string;
+}
+
+export interface ILoginResponse {
+  user: IUser;
+  mfaRequired: boolean;
 }
 
 export interface IRegister {
@@ -25,11 +40,8 @@ export interface IVerifyMfa {
 }
 
 export interface ISetUpMfaRes {
-  data: {
-    secret: string;
-    qrImageUrl: string;
-    message: string;
-  };
+  secret: string;
+  qrImageUrl: string;
 }
 
 export interface IVerifyMfaAndLogin {
@@ -46,9 +58,19 @@ export interface ISession {
   isCurrent: boolean;
 }
 
-export interface IGetAllSessionsRes {
-  data: {
-    message: string;
-    sessions: ISession[];
-  };
+export type userPreferences = {
+  enable2FA: boolean;
+  emailNotification: boolean;
+  _id: string;
+  twoFactorSecret?: string;
+};
+
+export interface IUser {
+  _id: string;
+  name: string;
+  email: string;
+  isEmailVerified: boolean;
+  userPreferences: userPreferences;
+  createdAt: Date;
+  updatedAt: Date;
 }

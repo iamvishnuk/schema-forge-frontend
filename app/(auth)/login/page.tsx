@@ -40,7 +40,7 @@ export default function Login() {
     mutate(values, {
       onSuccess: (response) => {
         console.log('response', response);
-        if (response.data.data?.mfaRequired) {
+        if (response.data?.mfaRequired) {
           router.push(`/verify-mfa?email=${values.email}`);
         } else {
           toast.success('Logged in successfully');
