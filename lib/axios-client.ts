@@ -9,6 +9,9 @@ const options = {
 
 const API = axios.create(options);
 
+export const APIRefresh = axios.create(options);
+APIRefresh.interceptors.response.use((response) => response);
+
 export const handleUnauthorized = () => {
   redirect('/auth/login');
 };
@@ -30,17 +33,31 @@ API.interceptors.response.use(
     const { data, status } = error.response;
 
     // Handle JWT-related authentication errors
-    if (
-      status === 401 &&
-      (data.message?.includes('Invalid token') ||
-        data.message?.includes('token has expired'))
-    ) {
-      handleUnauthorized();
-      return Promise.reject({
-        status: 'error',
-        message: data.message || 'Unauthorized access',
-        statusCode: 401
-      });
+    if (status === 401) {
+      try {
+        // Attempt to refresh the token
+        return APIRefresh.get('/auth/refresh').then((response) => {
+          // If the token is successfully refreshed, retry the original request
+          if (response.status === 200) {
+            return API.request(error.config);
+          }
+
+          // If the token refresh fails, redirect to the login page
+          handleUnauthorized();
+          return Promise.reject({
+            status: 'error',
+            message: 'Unauthorized access',
+            statusCode: 401
+          });
+        });
+      } catch {
+        handleUnauthorized();
+        return Promise.reject({
+          status: 'error',
+          message: data.message || 'Unauthorized access',
+          statusCode: 401
+        });
+      }
     }
 
     // For other error responses, return the error data
