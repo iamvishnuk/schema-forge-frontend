@@ -39,7 +39,6 @@ export default function Login() {
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     mutate(values, {
       onSuccess: (response) => {
-        console.log('response', response);
         if (response.data?.mfaRequired) {
           router.push(`/verify-mfa?email=${values.email}`);
         } else {

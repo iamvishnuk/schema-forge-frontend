@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 
 const ModeToggle = () => {
   const { setTheme, theme } = useTheme();
-  console.log('theme', theme);
   return (
     <div className='flex gap-1 rounded-full border p-1'>
       <button

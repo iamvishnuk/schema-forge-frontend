@@ -74,3 +74,26 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICreateTeam {
+  name: string;
+  description?: string;
+}
+
+export interface ITeamMember {
+  _id: string;
+  userId: string;
+  joinedAt: Date;
+  role: string;
+  status: string;
+}
+export interface ITeam {
+  _id: string;
+  name: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  members: ITeamMember[];
+  projects: string[];
+}

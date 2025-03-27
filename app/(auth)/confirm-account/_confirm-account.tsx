@@ -34,7 +34,6 @@ export default function ConfirmAccount() {
           router.push('/login');
         },
         onError: (error) => {
-          console.log(error.message);
           toast.error('Error', { description: error.message });
         }
       }

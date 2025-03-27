@@ -53,8 +53,7 @@ export default function ResetPassword() {
           });
           router.push('/login');
         },
-        onError: (error) => {
-          console.log(error.message);
+        onError: () => {
           toast.error('Error', { description: 'Password reset failed' });
         }
       }
