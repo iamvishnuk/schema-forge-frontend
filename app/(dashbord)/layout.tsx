@@ -47,7 +47,7 @@ export default function DashBoardLayout({
               </Breadcrumb>
             </div>
           </header>
-          {children}
+          <main className='p-4'>{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>

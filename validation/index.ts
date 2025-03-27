@@ -66,3 +66,11 @@ export const MfaVerifySchema = z.object({
     message: 'Your one-time password must be 6 characters.'
   })
 });
+
+export const CreateTeamSchema = z.object({
+  name: z
+    .string({ required_error: 'Team name is required' })
+    .min(1, { message: 'Team name is required' })
+    .max(50, { message: 'Team name should not exceed 50 characters' }),
+  description: z.string().optional()
+});

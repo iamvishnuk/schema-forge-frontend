@@ -1,11 +1,13 @@
 import {
   APIResponse,
+  ICreateTeam,
   ILogin,
   ILoginResponse,
   IRegister,
   IResetPassword,
   ISession,
   ISetUpMfaRes,
+  ITeam,
   IUser,
   IVerifyMfa,
   IVerifyMfaAndLogin
@@ -57,3 +59,23 @@ export const revokeMfaMutationFn = async () => await API.put('/mfa/revoke');
 
 export const verifyMfaAndLoginMutationFn = async (data: IVerifyMfaAndLogin) =>
   await API.post('/mfa/verify-login', data);
+
+// <-------- TEAM MUTATIONS -------->
+export const createTeamMutationFn = async (
+  data: ICreateTeam
+): Promise<APIResponse<ITeam>> => await API.post('/team/create', data);
+
+export const getAllUserTeamsMutationFn = async (): Promise<
+  APIResponse<ITeam[]>
+> => await API.get('/team/user-teams');
+
+export const updateTeamDetailsMutationFn = async (
+  data: ICreateTeam & { teamId: string }
+) =>
+  await API.put(`/team/update/${data?.teamId}`, {
+    name: data.name,
+    description: data.description
+  });
+
+export const deleteTeamMutationFn = async (teamId: string) =>
+  await API.delete(`/team/delete/${teamId}`);

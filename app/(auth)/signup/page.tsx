@@ -45,7 +45,6 @@ export default function SignUp() {
         setIsSubmitted(true);
       },
       onError: (error) => {
-        console.log(error);
         toast.error('Error', { description: error.message });
       }
     });

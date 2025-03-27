@@ -17,8 +17,6 @@ export default async function middleware(req: NextRequest) {
 
   const accessToken = req.cookies.get('accessToken')?.value;
 
-  console.log('accessToken', accessToken);
-
   if (isProtectedRoute && !accessToken) {
     return NextResponse.redirect(new URL('/login', req.nextUrl));
   }
