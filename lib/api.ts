@@ -8,6 +8,7 @@ import {
   ISession,
   ISetUpMfaRes,
   ITeam,
+  ITeamWithDetails,
   IUser,
   IVerifyMfa,
   IVerifyMfaAndLogin
@@ -79,3 +80,7 @@ export const updateTeamDetailsMutationFn = async (
 
 export const deleteTeamMutationFn = async (teamId: string) =>
   await API.delete(`/team/delete/${teamId}`);
+
+export const getTeamByIdMutationFn = async (
+  teamId: string
+): Promise<APIResponse<ITeamWithDetails>> => await API.get(`/team/${teamId}`);

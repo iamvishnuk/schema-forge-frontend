@@ -14,7 +14,6 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -25,20 +24,23 @@ import {
 } from '@/components/ui/table';
 
 import { DataTablePagination } from './data-table-pagination';
-import { DataTableViewOptions } from './data-table-view-options';
+import { DataTableToolbar, TFilterOption } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  filterOptions?: TFilterOption[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
-  data
+  data,
+  filterOptions
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [globalFilter, setGlobalFilter] = useState<any>([]);
 
   const table = useReactTable({
     data,
@@ -50,26 +52,22 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
-      columnVisibility
+      columnVisibility,
+      globalFilter
     }
   });
 
   return (
     <div>
-      <div className='flex items-center gap-3 py-4'>
-        <Input
-          placeholder='Filter emails...'
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
-          }
-          className='max-w-sm'
-        />
-        <DataTableViewOptions table={table} />
-      </div>
+      <DataTableToolbar
+        table={table}
+        setGlobalFilter={setGlobalFilter}
+        filterOptions={filterOptions}
+      />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
