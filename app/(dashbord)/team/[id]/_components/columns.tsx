@@ -2,27 +2,13 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { VariantProps } from 'class-variance-authority';
-import { MoreHorizontal } from 'lucide-react';
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
-import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog';
 import { Badge, badgeVariants } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import { TeamRoleEnum } from '@/definitions/enums';
 import { ITeamMemberWithUser } from '@/definitions/interface';
-import { TEAM_ROLES } from '@/lib/constant';
+
+import { RowAction } from './row-action';
 
 export const teamMemberColumns: ColumnDef<ITeamMemberWithUser>[] = [
   {
@@ -125,47 +111,6 @@ export const teamMemberColumns: ColumnDef<ITeamMemberWithUser>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant='ghost'
-            size='icon'
-          >
-            <MoreHorizontal className='size-4' />
-            <span className='sr-only'>Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem asChild>
-            <DeleteConfirmationDialog
-              open={false}
-              setOpen={(value: boolean) => {
-                console.log(value);
-              }}
-              confirmFn={() => {}}
-              isLoading={false}
-              btnText='Remove'
-            />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Roles</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuRadioGroup value={row.getValue('role')}>
-                {TEAM_ROLES.map((role, index) => (
-                  <DropdownMenuRadioItem
-                    value={role.value}
-                    key={index}
-                  >
-                    {role.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    )
+    cell: ({ row }) => <RowAction row={row} />
   }
 ];

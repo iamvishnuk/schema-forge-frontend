@@ -1,4 +1,4 @@
-import { MemberStatusEnum, TeamRoleEnum } from './enums';
+import { InviteTeamRoleEnum, MemberStatusEnum, TeamRoleEnum } from './enums';
 
 export interface APIResponse<T> {
   status: 'success' | 'error';
@@ -107,4 +107,10 @@ export interface ITeamMemberWithUser extends Omit<ITeamMember, 'userId'> {
 export interface ITeamWithDetails extends Omit<ITeam, 'createdBy' | 'members'> {
   createdBy: Pick<IUser, '_id' | 'name' | 'email'>;
   members: ITeamMemberWithUser[];
+}
+
+export interface IInviteTeamMember {
+  inviteeEmail: string;
+  role: InviteTeamRoleEnum;
+  teamId: string;
 }

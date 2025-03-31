@@ -35,7 +35,7 @@ const TeamDetailsPage = ({ teamId }: Props) => {
             {teamDetails?.description}
           </p>
         </div>
-        <InviteMemberModel />
+        <InviteMemberModel teamId={teamDetails?._id!} />
       </div>
       <Separator className='mt-4' />
       <DataTable

@@ -7,6 +7,12 @@ export enum TeamRoleEnum {
   VIEWER = 'viewer'
 }
 
+export enum InviteTeamRoleEnum {
+  ADMIN = 'admin',
+  MEMBER = 'member',
+  VIEWER = 'viewer'
+}
+
 export enum MemberStatusEnum {
   ACTIVE = 'active',
   PENDING = 'pending',
