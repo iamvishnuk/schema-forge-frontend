@@ -124,7 +124,7 @@ export default function Login() {
             </div>
             <div className='mb-4 flex w-full items-center justify-end'>
               <Link
-                className='text-sm text-white dark:text-white'
+                className='text-sm hover:underline dark:text-white'
                 href='/reset-password?email='
               >
                 Forgot your password?

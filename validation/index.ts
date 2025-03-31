@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { InviteTeamRoleEnum } from '@/definitions/enums';
+
 export const RegisterSchema = z
   .object({
     name: z
@@ -73,4 +75,14 @@ export const CreateTeamSchema = z.object({
     .min(1, { message: 'Team name is required' })
     .max(50, { message: 'Team name should not exceed 50 characters' }),
   description: z.string().optional()
+});
+
+export const InviteTeamMemberSchema = z.object({
+  inviteeEmail: z
+    .string({ required_error: 'Email is required' })
+    .trim()
+    .email({ message: 'Enter a valid email' }),
+  role: z.nativeEnum(InviteTeamRoleEnum, {
+    required_error: 'Role is required'
+  })
 });

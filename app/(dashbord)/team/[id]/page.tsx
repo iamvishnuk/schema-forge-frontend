@@ -1,32 +1,18 @@
-import { columns, Payment } from '../../../../components/data-table/columns';
-import { DataTable } from '../../../../components/data-table/data-table';
+import React from 'react';
 
-async function getData(): Promise<Payment[]> {
-  return [
-    {
-      id: '728ed52f',
-      amount: 100,
-      status: 'pending',
-      email: 'm@example.com'
-    },
-    {
-      id: '728ed522',
-      amount: 100,
-      status: 'processing',
-      email: 'm1@example.com'
-    }
-  ];
-}
+import TeamDetailsPage from './_components/TeamDetailsPage';
 
-export default async function DemoPage() {
-  const data = await getData();
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
+const page = async ({ params }: Props) => {
+  const { id } = await params;
   return (
-    <div className='container mx-auto py-10'>
-      <DataTable
-        columns={columns}
-        data={data}
-      />
+    <div>
+      <TeamDetailsPage teamId={id} />
     </div>
   );
-}
+};
+
+export default page;
