@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ITeam } from '@/definitions/interface';
+import { IGetUserTeams } from '@/definitions/interface';
 import { createTeamMutationFn, updateTeamDetailsMutationFn } from '@/lib/api';
 import { CreateTeamSchema } from '@/validation';
 
@@ -37,8 +37,8 @@ type Props = {
   open: boolean;
   // eslint-disable-next-line no-unused-vars
   setOpen: (value: boolean) => void;
-  data?: ITeam | null;
-  setEditData: Dispatch<SetStateAction<ITeam | null>>;
+  data?: IGetUserTeams | null;
+  setEditData: Dispatch<SetStateAction<IGetUserTeams | null>>;
 };
 
 const TeamForm = ({ btnText, open, setOpen, data, setEditData }: Props) => {

@@ -85,10 +85,23 @@ export interface ICreateTeam {
 export interface ITeamMember {
   _id: string;
   userId: string;
+  teamId: string;
   joinedAt: Date;
   role: TeamRoleEnum;
   status: MemberStatusEnum;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export interface IGetUserTeams {
+  _id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  createdAt: Date;
+  createdBy: string;
+}
+
 export interface ITeam {
   _id: string;
   name: string;
@@ -96,21 +109,24 @@ export interface ITeam {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-  members: ITeamMember[];
-  projects: string[];
 }
 
 export interface ITeamMemberWithUser extends Omit<ITeamMember, 'userId'> {
   userId: Pick<IUser, '_id' | 'name' | 'email'>;
 }
 
-export interface ITeamWithDetails extends Omit<ITeam, 'createdBy' | 'members'> {
-  createdBy: Pick<IUser, '_id' | 'name' | 'email'>;
-  members: ITeamMemberWithUser[];
+export interface ITeamWithDetails {
+  team: ITeam;
+  teamMember: ITeamMemberWithUser[];
 }
 
 export interface IInviteTeamMember {
   inviteeEmail: string;
   role: InviteTeamRoleEnum;
   teamId: string;
+}
+
+export interface IChangeTeamMemberRole {
+  id: string;
+  role: string;
 }

@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAuthContext } from '@/context/auth-provider';
-import { ITeam } from '@/definitions/interface';
+import { IGetUserTeams } from '@/definitions/interface';
 import { deleteTeamMutationFn, getAllUserTeamsMutationFn } from '@/lib/api';
 
 import TeamForm from './_TeamForm';
@@ -35,13 +35,12 @@ export default function TeamsPage() {
   const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
-  const [editData, setEditData] = useState<ITeam | null>(null);
+  const [editData, setEditData] = useState<IGetUserTeams | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const { data, isPending } = useQuery({
     queryKey: ['user-teams'],
-    queryFn: getAllUserTeamsMutationFn,
-    staleTime: Infinity
+    queryFn: getAllUserTeamsMutationFn
   });
 
   const { mutate, isPending: isDeletePending } = useMutation({
@@ -100,7 +99,7 @@ export default function TeamsPage() {
               <div className='flex items-center gap-2'>
                 <Users className='text-muted-foreground h-4 w-4' />
                 <span className='text-muted-foreground text-sm'>
-                  {team.members.length} members
+                  {team.memberCount} members
                 </span>
               </div>
             </CardContent>
