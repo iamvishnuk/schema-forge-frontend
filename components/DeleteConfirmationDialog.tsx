@@ -23,6 +23,7 @@ type Props = {
   description?: string;
   btnText?: string;
   isLoading: boolean;
+  disable?: boolean;
 };
 
 const DeleteConfirmationDialog = ({
@@ -32,7 +33,8 @@ const DeleteConfirmationDialog = ({
   btnText = 'Delete',
   isLoading,
   open,
-  setOpen
+  setOpen,
+  disable = false
 }: Props) => {
   return (
     <Dialog
@@ -41,7 +43,10 @@ const DeleteConfirmationDialog = ({
       onOpenChange={setOpen}
     >
       <DialogTrigger asChild>
-        <Button className='dark:bg-background flex w-full justify-start rounded-sm bg-white !px-2 !py-1 text-red-500 hover:cursor-pointer hover:bg-red-100 dark:text-red-800 dark:hover:bg-red-950/90'>
+        <Button
+          disabled={disable}
+          className='dark:bg-background flex w-full justify-start rounded-sm bg-white !px-2 !py-1 text-red-500 hover:cursor-pointer hover:bg-red-100 dark:text-red-800 dark:hover:bg-red-950/90'
+        >
           <Trash />
           {btnText}
         </Button>

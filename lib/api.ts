@@ -1,6 +1,8 @@
 import {
   APIResponse,
+  IChangeTeamMemberRole,
   ICreateTeam,
+  IGetUserTeams,
   IInviteTeamMember,
   ILogin,
   ILoginResponse,
@@ -9,6 +11,7 @@ import {
   ISession,
   ISetUpMfaRes,
   ITeam,
+  ITeamMember,
   ITeamWithDetails,
   IUser,
   IVerifyMfa,
@@ -78,7 +81,7 @@ export const acceptTeamInvitationMutationFn = async (data: {
   await API.post('/team/accept-invite', data);
 
 export const getAllUserTeamsMutationFn = async (): Promise<
-  APIResponse<ITeam[]>
+  APIResponse<IGetUserTeams[]>
 > => await API.get('/team/user-teams');
 
 export const updateTeamDetailsMutationFn = async (
@@ -95,3 +98,13 @@ export const deleteTeamMutationFn = async (teamId: string) =>
 export const getTeamByIdMutationFn = async (
   teamId: string
 ): Promise<APIResponse<ITeamWithDetails>> => await API.get(`/team/${teamId}`);
+
+export const leaveOrRemoveTeamMemberMutationFn = async (
+  id: string
+): Promise<APIResponse<{ isSelf: boolean }>> =>
+  await API.delete(`/team/member/remove/${id}`);
+
+export const changeTeamMemberRoleMutationFn = async (
+  data: IChangeTeamMemberRole
+): Promise<APIResponse<ITeamMember>> =>
+  await API.put('team/member/change-role', data);

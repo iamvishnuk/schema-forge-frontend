@@ -33,7 +33,9 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { useAppSelector } from '@/hooks/useAppSelector';
 import { inviteTeamMemberMutationFn } from '@/lib/api';
+import { checkTeamRolePermission } from '@/RBAC/team';
 import { InviteTeamMemberSchema } from '@/validation';
 
 type Props = {
@@ -48,6 +50,7 @@ const INVITE_TEAM_ROLES = [
 
 const InviteMemberModel = ({ teamId }: Props) => {
   const [open, setOpen] = useState(false);
+  const { teamRole } = useAppSelector((state) => state.teamRole);
 
   const form = useForm<z.infer<typeof InviteTeamMemberSchema>>({
     resolver: zodResolver(InviteTeamMemberSchema),
@@ -78,6 +81,10 @@ const InviteMemberModel = ({ teamId }: Props) => {
       }
     );
   };
+
+  if (!checkTeamRolePermission(teamRole, 'team:invite')) {
+    return null;
+  }
 
   return (
     <Dialog
