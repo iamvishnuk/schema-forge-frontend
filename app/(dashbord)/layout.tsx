@@ -16,7 +16,7 @@ export default function DashBoardLayout({
         <AppSidebar />
         <SidebarInset>
           <Header />
-          <main className='p-4'>{children}</main>
+          <main className='h-full p-4'>{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>

@@ -1,11 +1,13 @@
 import {
   APIResponse,
   IChangeTeamMemberRole,
+  ICreateProject,
   ICreateTeam,
   IGetUserTeams,
   IInviteTeamMember,
   ILogin,
   ILoginResponse,
+  IProject,
   IRegister,
   IResetPassword,
   ISession,
@@ -108,3 +110,26 @@ export const changeTeamMemberRoleMutationFn = async (
   data: IChangeTeamMemberRole
 ): Promise<APIResponse<ITeamMember>> =>
   await API.put('team/member/change-role', data);
+
+export const getUserCreatedTeamsMutationFn = async (): Promise<
+  APIResponse<ITeam[]>
+> => await API.get('/team/user-created-teams');
+
+// <-------- PROJECT MUTATIONS -------->
+export const createProjectMutationFn = async (
+  data: ICreateProject
+): Promise<APIResponse<IProject>> => await API.post('/project/create', data);
+
+export const getProjectsMutationFn = async (): Promise<
+  APIResponse<IProject[]>
+> => await API.get('/project');
+
+export const updateProjectMutationFn = async (
+  data: ICreateProject & { projectId: string }
+): Promise<APIResponse<IProject>> => {
+  const { projectId, ...rest } = data;
+  return await API.put(`/project/update/${projectId}`, rest);
+};
+
+export const deleteProjectMutationFn = async (projectId: string) =>
+  await API.delete(`/project/delete/${projectId}`);

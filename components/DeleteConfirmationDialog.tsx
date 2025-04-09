@@ -55,7 +55,7 @@ const DeleteConfirmationDialog = ({
         <DialogHeader className='flex flex-col items-center'>
           <CircleAlert
             size={30}
-            className='text-red-500'
+            className='animate-bounce text-red-500'
           />
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className='text-center'>

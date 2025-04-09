@@ -19,3 +19,10 @@ export enum MemberStatusEnum {
   INVITED = 'invited',
   SUSPENDED = 'suspended'
 }
+
+export enum ProjectDataBaseTypeEnum {
+  MYSQL = 'mysql',
+  POSTGRESQL = 'postgresql',
+  MONGODB = 'mongodb',
+  SQLITE = 'sqlite'
+}
