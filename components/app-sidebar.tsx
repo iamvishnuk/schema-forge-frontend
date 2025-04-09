@@ -24,7 +24,8 @@ const data = {
   },
   navMain: [
     { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboardIcon },
-    { title: 'Team', url: '/team', icon: Users }
+    { title: 'Team', url: '/team', icon: Users },
+    { title: 'Projects', url: '/project', icon: Frame }
   ],
   projects: [
     {

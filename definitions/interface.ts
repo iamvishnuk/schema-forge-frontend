@@ -1,4 +1,9 @@
-import { InviteTeamRoleEnum, MemberStatusEnum, TeamRoleEnum } from './enums';
+import {
+  InviteTeamRoleEnum,
+  MemberStatusEnum,
+  ProjectDataBaseTypeEnum,
+  TeamRoleEnum
+} from './enums';
 
 export interface APIResponse<T> {
   status: 'success' | 'error';
@@ -129,4 +134,26 @@ export interface IInviteTeamMember {
 export interface IChangeTeamMemberRole {
   id: string;
   role: string;
+}
+
+export interface ICreateProject {
+  name: string;
+  description?: string;
+  databaseType: ProjectDataBaseTypeEnum;
+  teamIds: string[];
+  connectionString?: string;
+  tag: string[];
+}
+
+export interface IProject {
+  name: string;
+  description: string;
+  teamIds: string[];
+  databaseType: ProjectDataBaseTypeEnum;
+  tag: string[];
+  connectionString: string;
+  createdBy: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
 }
