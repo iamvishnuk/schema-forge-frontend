@@ -1,4 +1,5 @@
 'use client';
+
 import '@xyflow/react/dist/style.css';
 
 import {
@@ -24,6 +25,8 @@ import {
 } from '@/features/schema-editor/schemaEditorUI';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
+import { initialEdges, initialNodes } from '@/lib/initial-data';
+import { createSafeEdgeCopy, createSafeNodeCopy } from '@/lib/node-utils';
 import { cn } from '@/lib/utils';
 
 import EditorPanel from './editor-panel';
@@ -39,8 +42,6 @@ const nodeTypes: NodeTypes = {
 const SchemaEditor = ({}: Props) => {
   const dispatch = useAppDispatch();
 
-  const storeEdges = useAppSelector((state) => state.schema.edges);
-  const storeNodes = useAppSelector((state) => state.schema.nodes);
   const isSidebarOpen = useAppSelector(
     (state) => state.schemaEditorUI.isSidebarOpen
   );
@@ -48,8 +49,8 @@ const SchemaEditor = ({}: Props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(storeNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(storeEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   // Handle connections between nodes
   const onConnect = useCallback(
@@ -59,6 +60,7 @@ const SchemaEditor = ({}: Props) => {
           {
             ...params,
             animated: true,
+            type: 'step',
             markerEnd: {
               type: MarkerType.ArrowClosed
             }
@@ -72,9 +74,12 @@ const SchemaEditor = ({}: Props) => {
   // Handle node selection
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
-      dispatch(setSelectedNode(node as CollectionNodeData));
+      // Use a safe approach to clone the node without read-only properties
+      const nodeToSelect = createSafeNodeCopy(node);
 
-      // Update nodes to indicate which one is selected
+      dispatch(setSelectedNode(nodeToSelect as CollectionNodeData));
+
+      // Update nodes to indicate which one is selected - ensure proper immutability
       setNodes((nds) =>
         nds.map((n) => ({
           ...n,
@@ -85,16 +90,20 @@ const SchemaEditor = ({}: Props) => {
         }))
       );
     },
-    [setNodes, dispatch]
+    [dispatch, setNodes]
   );
 
   // Handle edge selection
   const onEdgeClick = useCallback(
     (_: React.MouseEvent, edge: Edge) => {
-      dispatch(setSelectedEdge(edge));
-      // Clear selection state from all nodes
-      setNodes((nds) =>
-        nds.map((n) => ({
+      // Create a clean copy of the edge without potential read-only properties
+      const edgeToSelect = createSafeEdgeCopy(edge);
+
+      dispatch(setSelectedEdge(edgeToSelect));
+
+      // Clear selection state from all nodes - ensure proper immutability
+      setNodes((prevNodes) =>
+        prevNodes.map((n) => ({
           ...n,
           data: {
             ...n.data,
@@ -103,7 +112,7 @@ const SchemaEditor = ({}: Props) => {
         }))
       );
     },
-    [setNodes, dispatch]
+    [dispatch, setNodes]
   );
 
   // Handle pane click (deselect everything)
@@ -112,9 +121,9 @@ const SchemaEditor = ({}: Props) => {
     dispatch(setSelectedEdge(null));
     dispatch(closeSidebar());
 
-    // Clear selection state from all nodes
-    setNodes((nds) =>
-      nds.map((n) => ({
+    // Clear selection state from all nodes - ensure proper immutability
+    setNodes((prevNodes) =>
+      prevNodes.map((n) => ({
         ...n,
         data: {
           ...n.data,
@@ -122,7 +131,7 @@ const SchemaEditor = ({}: Props) => {
         }
       }))
     );
-  }, [setNodes, dispatch]);
+  }, [dispatch, setNodes]);
 
   // function to toggle fullscreen editor
   const toggleFullScreen = () => {
@@ -153,12 +162,12 @@ const SchemaEditor = ({}: Props) => {
 
   return (
     <div
-      className='flex h-full w-full rounded-lg border shadow-md'
+      className='flex h-[calc(100vh-220px)] w-full rounded-lg border shadow-md'
       ref={wrapperRef}
     >
       <div
         className={cn(
-          'bg-muted/30 overflow-x-hidden overflow-y-auto border-r transition-all duration-300 ease-in-out',
+          'bg-muted/30 h-full overflow-x-hidden border-r transition-all duration-300 ease-in-out',
           isSidebarOpen ? 'min-w-[400px]' : 'w-0'
         )}
       >
@@ -182,6 +191,7 @@ const SchemaEditor = ({}: Props) => {
           onEdgeClick={onEdgeClick}
           onPaneClick={onPaneClick}
           fitView
+          attributionPosition='bottom-right'
         >
           <Controls />
           <Background />

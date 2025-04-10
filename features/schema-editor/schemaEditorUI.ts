@@ -43,6 +43,17 @@ const schemaEditorUISlice = createSlice({
       if (action.payload) {
         state.selectedNode = null;
       }
+    },
+    updateSelectedNode: (state, action: PayloadAction<CollectionNodeData>) => {
+      if (state.selectedNode) {
+        state.selectedNode = {
+          ...state.selectedNode,
+          data: {
+            ...state.selectedNode.data,
+            ...action.payload.data
+          }
+        };
+      }
     }
   }
 });
@@ -51,6 +62,7 @@ export const {
   closeSidebar,
   openSidebar,
   setSelectedEdge,
-  setSelectedNode
+  setSelectedNode,
+  updateSelectedNode
 } = schemaEditorUISlice.actions;
 export default schemaEditorUISlice.reducer;

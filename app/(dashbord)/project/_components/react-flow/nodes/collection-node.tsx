@@ -1,10 +1,13 @@
+'use client';
+
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { Database, Key } from 'lucide-react';
 import { memo } from 'react';
 
 import { cn } from '@/lib/utils';
 
-interface Field {
+export interface Field {
+  id: string;
   name: string;
   type: string;
   required?: boolean;
@@ -59,7 +62,7 @@ function CollectionNode({ data }: NodeProps<CollectionNodeData>) {
         {data.fields.map((field, index) => (
           <div
             key={index}
-            className='flex items-center border-t border-dashed border-stone-200 py-1 text-sm'
+            className='relative flex items-center border-t border-dashed border-stone-200 py-1 text-sm'
           >
             <div className='flex flex-1 items-center'>
               {field.isPrimary && (
@@ -86,8 +89,8 @@ function CollectionNode({ data }: NodeProps<CollectionNodeData>) {
                 type='source'
                 position={Position.Right}
                 id={`${field.name}-source`}
-                className='h-3 w-3 bg-blue-500'
-                style={{ top: '50%', right: -10 }}
+                className='h-3 w-3 !bg-blue-500'
+                style={{ top: '50%', right: -20 }}
               />
             )}
           </div>
@@ -98,12 +101,12 @@ function CollectionNode({ data }: NodeProps<CollectionNodeData>) {
       <Handle
         type='target'
         position={Position.Top}
-        className='h-3 w-3 bg-green-500'
+        className='h-3 w-3 !bg-green-500'
       />
       <Handle
         type='source'
         position={Position.Bottom}
-        className='h-3 w-3 bg-blue-500'
+        className='h-3 w-3 !bg-blue-500'
       />
     </div>
   );
