@@ -1,4 +1,4 @@
-import { type Edge, MarkerType, type Node } from '@xyflow/react';
+import type { Edge, Node } from '@xyflow/react';
 
 export const initialNodes: Node[] = [
   {
@@ -6,48 +6,48 @@ export const initialNodes: Node[] = [
     type: 'collection',
     position: { x: 250, y: 100 },
     data: {
-      label: 'users',
-      description: 'Collection of users',
+      label: 'User',
       fields: [
-        { name: '_id', type: 'ObjectId', isPrimary: true },
-        { name: 'username', type: 'String', required: true },
-        { name: 'email', type: 'String', required: true },
-        { name: 'createdAt', type: 'Date', required: true }
+        { id: '001', name: '_id', type: 'ObjectId', isPrimary: true },
+        {
+          id: '002',
+          name: 'username',
+          type: 'String',
+          required: true,
+          isUnique: true
+        },
+        {
+          id: '003',
+          name: 'email',
+          type: 'String',
+          required: true,
+          isUnique: true,
+          index: true
+        },
+        { id: '004', name: 'password', type: 'String', required: true },
+        { id: '005', name: 'phoneNumber', type: 'String', required: true },
+        { id: '006', name: 'createdAt', type: 'DateTime' },
+        { id: '007', name: 'updatedAt', type: 'DateTime' }
       ]
     }
   },
   {
     id: '2',
     type: 'collection',
-    position: { x: 600, y: 100 },
+    position: { x: 400, y: 300 },
     data: {
-      label: 'products',
+      label: 'Post',
       fields: [
-        { name: '_id', type: 'ObjectId', isPrimary: true },
-        { name: 'name', type: 'String', required: true },
-        { name: 'price', type: 'Number', required: true },
-        { name: 'description', type: 'String' }
-      ]
-    }
-  },
-  {
-    id: '3',
-    type: 'collection',
-    position: { x: 400, y: 350 },
-    data: {
-      label: 'orders',
-      fields: [
-        { name: '_id', type: 'ObjectId', isPrimary: true, isUnique: true },
+        { id: '001', name: '_id', type: 'ObjectId', isPrimary: true },
+        { id: '002', name: 'title', type: 'String', required: true },
+        { id: '003', name: 'content', type: 'String', required: true },
         {
-          name: 'userId',
+          id: '004',
+          name: 'authorId',
           type: 'ObjectId',
           required: true,
-          ref: 'users',
-          index: true
-        },
-        { name: 'products', type: 'Array', required: true },
-        { name: 'totalAmount', type: 'Number', required: true },
-        { name: 'status', type: 'String', required: true }
+          ref: 'User'
+        }
       ]
     }
   }
@@ -55,33 +55,14 @@ export const initialNodes: Node[] = [
 
 export const initialEdges: Edge[] = [
   {
-    id: 'e1-3',
+    id: 'e1-2',
     source: '1',
-    target: '3',
+    target: '2',
     animated: true,
-    label: 'places',
-    markerEnd: {
-      type: MarkerType.ArrowClosed
-    }
-  },
-  {
-    id: 'e2-3',
-    source: '2',
-    target: '3',
-    animated: true,
-    label: 'contains',
-    markerEnd: {
-      type: MarkerType.ArrowClosed
+    label: 'has many',
+    type: 'step',
+    style: {
+      stroke: '#155dfc'
     }
   }
-];
-
-export const FIELD_TYPES = [
-  { value: 'String', label: 'String' },
-  { value: 'Number', label: 'Number' },
-  { value: 'Boolean', label: 'Boolean' },
-  { value: 'Date', label: 'Date' },
-  { value: 'ObjectId', label: 'ObjectId' },
-  { value: 'Array', label: 'Array' },
-  { value: 'Object', label: 'Object' }
 ];

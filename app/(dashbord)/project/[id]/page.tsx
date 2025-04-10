@@ -30,7 +30,7 @@ const page = ({}: Props) => {
       <Separator className='mb-3' />
       <Tabs
         defaultValue='schema'
-        className='h-[calc(100vh-150px)] w-full'
+        className='w-full'
       >
         <TabsList className='mb-3'>
           <TabsTrigger value='schema'>
