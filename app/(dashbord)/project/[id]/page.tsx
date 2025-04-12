@@ -9,9 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProjectTeamManagement from '../_components/ProjectTeamManagement';
 import SchemaEditor from '../_components/react-flow/schema-editor';
 
-type Props = {};
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
-const page = ({}: Props) => {
+const page = async ({ params }: Props) => {
+  const { id } = await params;
   return (
     <div className='h-full'>
       <div className='mb-4 flex items-center'>
@@ -52,7 +55,7 @@ const page = ({}: Props) => {
         </TabsList>
 
         <TabsContent value='schema'>
-          <SchemaEditor />
+          <SchemaEditor id={id} />
         </TabsContent>
         <TabsContent value='team'>
           <ProjectTeamManagement />

@@ -16,8 +16,10 @@ import {
   useEdgesState,
   useNodesState
 } from '@xyflow/react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useAuthContext } from '@/context/auth-provider';
+import { useSocket } from '@/context/socket-provider';
 import {
   closeSidebar,
   setSelectedEdge,
@@ -29,18 +31,27 @@ import { initialEdges, initialNodes } from '@/lib/initial-data';
 import { createSafeEdgeCopy, createSafeNodeCopy } from '@/lib/node-utils';
 import { cn } from '@/lib/utils';
 
+import ConnectedUsers from '../ConnectedUsers';
 import EditorPanel from './editor-panel';
 import EditorSidebar from './editor-sidebar';
 import collectionNode, { CollectionNodeData } from './nodes/collection-node';
 
-type Props = {};
+type Props = { id: string };
 
 const nodeTypes: NodeTypes = {
   collection: collectionNode
 };
 
-const SchemaEditor = ({}: Props) => {
+const SchemaEditor = ({ id }: Props) => {
   const dispatch = useAppDispatch();
+  const { socket } = useSocket();
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (socket && user) {
+      socket.emit('PROJECT:JOIN', { projectId: id, userName: user?.name });
+    }
+  }, [socket, id, user]);
 
   const isSidebarOpen = useAppSelector(
     (state) => state.schemaEditorUI.isSidebarOpen
@@ -162,7 +173,7 @@ const SchemaEditor = ({}: Props) => {
 
   return (
     <div
-      className='flex h-[calc(100vh-220px)] w-full rounded-lg border shadow-md'
+      className='relative flex h-[calc(100vh-220px)] w-full rounded-lg border shadow-md'
       ref={wrapperRef}
     >
       <div
@@ -171,6 +182,7 @@ const SchemaEditor = ({}: Props) => {
           isSidebarOpen ? 'min-w-[400px]' : 'w-0'
         )}
       >
+        <ConnectedUsers className='absolute top-4 right-4' />
         <EditorSidebar
           setEdges={setEdges}
           setNodes={setNodes}
