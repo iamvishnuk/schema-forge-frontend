@@ -28,7 +28,9 @@ const page = async ({ params }: Props) => {
             <ArrowLeft className='mr-2 h-4 w-4' />
           </Link>
         </Button>
-        <h1 className='text-3xl font-bold tracking-tight'>Vishnu's Project</h1>
+        <h1 className='text-3xl font-bold tracking-tight'>
+          Vishnu's Project 1
+        </h1>
       </div>
       <Separator className='mb-3' />
       <Tabs
