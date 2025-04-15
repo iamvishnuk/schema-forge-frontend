@@ -10,6 +10,7 @@ import {
   Trash2
 } from 'lucide-react';
 import React, { useCallback } from 'react';
+import { v4 as uuid } from 'uuid';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,8 +19,14 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip';
-import { toggleSidebar } from '@/features/schema-editor/schemaEditorUI';
+import { useSocket } from '@/context/socket-provider';
+import {
+  closeSidebar,
+  setSelectedNode,
+  toggleSidebar
+} from '@/features/schema-editor/schemaEditorUI';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { useAppSelector } from '@/hooks/useAppSelector';
 import { calculateXYPosition } from '@/lib/utils';
 
 type Props = {
@@ -29,31 +36,65 @@ type Props = {
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
   nodes: Node[];
   edges: Edge[];
+  projectId: string;
 };
 
 const EditorPanel = ({
   toggleFullScreen,
   isFullScreen,
   setNodes,
-  nodes
+  nodes,
+  projectId
 }: Props) => {
   const dispatch = useAppDispatch();
+  const { emit, isConnected } = useSocket();
+  const selectedNode = useAppSelector(
+    (state) => state.schemaEditorUI.selectedNode
+  );
 
   const addCollectionNode = useCallback(() => {
     const newNode: Node = {
-      id: `node_${Date.now()}`,
+      id: uuid(),
       type: 'collection',
       position: calculateXYPosition(nodes),
       data: {
         label: 'schema',
         fields: [
-          { name: '_id', type: 'ObjectId', isPrimary: true, required: true }
+          {
+            id: uuid(),
+            name: '_id',
+            type: 'ObjectId',
+            isPrimary: true,
+            required: true
+          }
         ]
       }
     };
 
     setNodes((nds) => nds.concat(newNode));
-  }, [setNodes, nodes]);
+
+    // Emit event to update other clients
+    if (isConnected) {
+      console.log('Emitting DIAGRAM:NODE_ADDED event');
+      emit('DIAGRAM:NODE_ADDED', {
+        projectId,
+        node: newNode
+      });
+    }
+  }, [setNodes, nodes, emit, projectId, isConnected]);
+
+  const deleteCollectionNode = useCallback(() => {
+    if (!selectedNode) return;
+    const updatedNodes = nodes.filter((node) => node.id !== selectedNode.id);
+    setNodes(updatedNodes);
+    dispatch(setSelectedNode(null));
+    dispatch(closeSidebar());
+
+    if (isConnected) {
+      console.log('Emitting DIAGRAM:NODE_DELETED event');
+      emit('DIAGRAM:NODE_DELETED', { projectId, nodeId: selectedNode.id });
+    }
+  }, [selectedNode, nodes, setNodes, dispatch, emit, isConnected, projectId]);
 
   return (
     <Panel
@@ -124,11 +165,13 @@ const EditorPanel = ({
             <Button
               variant='outline'
               size='icon'
+              onClick={deleteCollectionNode}
+              disabled={!selectedNode}
             >
               <Trash2 className='h-4 w-4' />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Delete Collection</TooltipContent>
+          <TooltipContent>Delete Schema</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </Panel>

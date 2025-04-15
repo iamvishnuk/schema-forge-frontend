@@ -10,26 +10,43 @@ type Props = {
   className?: string;
 };
 
-const ConnectedUsers = ({ className }: Props) => {
-  const { socket } = useSocket();
+// Define proper types for socket events
+type ConnectedUser = {
+  userName: string;
+  socketId: string;
+};
 
-  const [connectedUsers, setConnectedUsers] = useState<
-    { userName: string; socketId: string }[]
-  >([]);
+const ConnectedUsers = ({ className }: Props) => {
+  const { socket, emit } = useSocket();
+  const [connectedUsers, setConnectedUsers] = useState<ConnectedUser[]>([]);
+  const [prevUserCount, setPrevUserCount] = useState(0);
 
   useEffect(() => {
-    if (socket) {
-      socket.on('PROJECT:USER_COUNT', (users) => {
-        console.log('users', users);
-        toast.success('New User Connected');
-        setConnectedUsers(users);
-      });
+    if (!socket) return;
 
-      return () => {
-        socket.off('PROJECT:USER_COUNT');
-      };
-    }
-  }, [socket]);
+    // Handle user count updates
+    const handleUserCount = (users: ConnectedUser[]) => {
+      try {
+        // Only show toast when a new user connects (count increases)
+        if (users.length > prevUserCount && prevUserCount > 0) {
+          toast.success('New user connected');
+        } else if (users.length < prevUserCount && prevUserCount > 0) {
+          toast.info('User disconnected');
+        }
+
+        setPrevUserCount(users.length);
+        setConnectedUsers(users);
+      } catch (error) {
+        console.error('Error handling user count:', error);
+      }
+    };
+
+    socket.on('PROJECT:USER_COUNT', handleUserCount);
+
+    return () => {
+      socket.off('PROJECT:USER_COUNT', handleUserCount);
+    };
+  }, [socket, emit, prevUserCount]);
 
   const visibleUsers = connectedUsers.slice(0, 3);
   const remainingCount = connectedUsers.length - 3;

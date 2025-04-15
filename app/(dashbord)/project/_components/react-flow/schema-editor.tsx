@@ -17,6 +17,7 @@ import {
   useNodesState
 } from '@xyflow/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { useAuthContext } from '@/context/auth-provider';
 import { useSocket } from '@/context/socket-provider';
@@ -27,7 +28,6 @@ import {
 } from '@/features/schema-editor/schemaEditorUI';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
-import { initialEdges, initialNodes } from '@/lib/initial-data';
 import { createSafeEdgeCopy, createSafeNodeCopy } from '@/lib/node-utils';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +35,10 @@ import ConnectedUsers from '../ConnectedUsers';
 import EditorPanel from './editor-panel';
 import EditorSidebar from './editor-sidebar';
 import collectionNode, { CollectionNodeData } from './nodes/collection-node';
+
+// Define empty initial states
+const emptyNodes: Node[] = [];
+const emptyEdges: Edge[] = [];
 
 type Props = { id: string };
 
@@ -44,14 +48,16 @@ const nodeTypes: NodeTypes = {
 
 const SchemaEditor = ({ id }: Props) => {
   const dispatch = useAppDispatch();
-  const { socket } = useSocket();
+  const { socket, emit, isConnected } = useSocket();
   const { user } = useAuthContext();
 
+  // Join project when socket connects
   useEffect(() => {
-    if (socket && user) {
-      socket.emit('PROJECT:JOIN', { projectId: id, userName: user?.name });
-    }
-  }, [socket, id, user]);
+    if (!socket || !isConnected || !user) return;
+
+    console.log('Emitting PROJECT:JOIN event');
+    emit('PROJECT:JOIN', { projectId: id, userName: user?.name });
+  }, [socket, isConnected, id, user, emit]);
 
   const isSidebarOpen = useAppSelector(
     (state) => state.schemaEditorUI.isSidebarOpen
@@ -60,8 +66,81 @@ const SchemaEditor = ({ id }: Props) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(emptyNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(emptyEdges);
+
+  // Listen for initial diagram data
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleInitialDiagram = (data: { Nodes: Node[]; Edges: Edge[] }) => {
+      try {
+        if (data.Nodes && Array.isArray(data.Nodes)) {
+          setNodes(data.Nodes);
+        }
+        if (data.Edges && Array.isArray(data.Edges)) {
+          setEdges(data.Edges);
+        }
+      } catch {
+        toast.error('Something went wrong', {
+          description: 'Failed to load diagram data, Please try again'
+        });
+      }
+    };
+
+    socket.on('DIAGRAM:INITIAL', handleInitialDiagram);
+
+    return () => {
+      socket.off('DIAGRAM:INITIAL', handleInitialDiagram);
+    };
+  }, [socket, isConnected, id, setNodes, setEdges]);
+
+  // Listen for node additions from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleNodeAdded = (data: Node) => {
+      console.log('Emitting DIAGRAM:NODE_ADDED event');
+      console.log('Node data', data);
+      try {
+        if (data) {
+          setNodes((nds) => nds.concat(data));
+        }
+      } catch {
+        toast.error('Failed to add new node from another user');
+      }
+    };
+
+    socket.on('DIAGRAM:NODE_ADDED', handleNodeAdded);
+
+    return () => {
+      socket.off('DIAGRAM:NODE_ADDED', handleNodeAdded);
+    };
+  }, [socket, isConnected, setNodes]);
+
+  // Listen for node deletion from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleNodeDeleted = (data: { nodeId: string }) => {
+      console.log('data', data);
+      console.log('Emitting DIAGRAM:NODE_DELETED event');
+      console.log('Node data', data);
+      try {
+        if (data.nodeId) {
+          setNodes((nds) => nds.filter((node) => node.id !== data.nodeId));
+        }
+      } catch {
+        toast.error('Failed to delete node from another user');
+      }
+    };
+
+    socket.on('DIAGRAM:NODE_DELETED', handleNodeDeleted);
+
+    return () => {
+      socket.off('DIAGRAM:NODE_DELETED', handleNodeDeleted);
+    };
+  }, [socket, isConnected, setNodes]);
 
   // Handle connections between nodes
   const onConnect = useCallback(
@@ -171,6 +250,8 @@ const SchemaEditor = ({ id }: Props) => {
     }
   };
 
+  console.log('isSidebarOpen', isSidebarOpen);
+
   return (
     <div
       className='relative flex h-[calc(100vh-220px)] w-full rounded-lg border shadow-md'
@@ -214,6 +295,7 @@ const SchemaEditor = ({ id }: Props) => {
             nodes={nodes}
             setEdges={setEdges}
             edges={edges}
+            projectId={id}
           />
         </ReactFlow>
       </ReactFlowProvider>
