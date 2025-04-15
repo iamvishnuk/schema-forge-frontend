@@ -5,6 +5,7 @@ import { type Edge, type Node } from '@xyflow/react';
 import { FileCode, Key, Trash2, Workflow } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -94,6 +95,7 @@ const EditorSidebar = ({ nodes, setNodes }: Props) => {
       if (node.id === selectedNode.id) {
         // Create a new field
         const newField = {
+          id: uuid(),
           name: data.name,
           type: data.type,
           required: data.required,
