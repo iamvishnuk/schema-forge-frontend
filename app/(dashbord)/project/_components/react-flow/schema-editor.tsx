@@ -24,7 +24,8 @@ import { useSocket } from '@/context/socket-provider';
 import {
   closeSidebar,
   setSelectedEdge,
-  setSelectedNode
+  setSelectedNode,
+  updateSelectedNode
 } from '@/features/schema-editor/schemaEditorUI';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
@@ -34,7 +35,10 @@ import { cn } from '@/lib/utils';
 import ConnectedUsers from '../ConnectedUsers';
 import EditorPanel from './editor-panel';
 import EditorSidebar from './editor-sidebar';
-import collectionNode, { CollectionNodeData } from './nodes/collection-node';
+import collectionNode, {
+  CollectionNodeData,
+  Field
+} from './nodes/collection-node';
 
 // Define empty initial states
 const emptyNodes: Node[] = [];
@@ -50,6 +54,10 @@ const SchemaEditor = ({ id }: Props) => {
   const dispatch = useAppDispatch();
   const { socket, emit, isConnected } = useSocket();
   const { user } = useAuthContext();
+
+  const selectedNode = useAppSelector(
+    (state) => state.schemaEditorUI.selectedNode
+  );
 
   // Join project when socket connects
   useEffect(() => {
@@ -100,8 +108,6 @@ const SchemaEditor = ({ id }: Props) => {
     if (!socket || !isConnected) return;
 
     const handleNodeAdded = (data: Node) => {
-      console.log('Emitting DIAGRAM:NODE_ADDED event');
-      console.log('Node data', data);
       try {
         if (data) {
           setNodes((nds) => nds.concat(data));
@@ -123,9 +129,6 @@ const SchemaEditor = ({ id }: Props) => {
     if (!socket || !isConnected) return;
 
     const handleNodeDeleted = (data: { nodeId: string }) => {
-      console.log('data', data);
-      console.log('Emitting DIAGRAM:NODE_DELETED event');
-      console.log('Node data', data);
       try {
         if (data.nodeId) {
           setNodes((nds) => nds.filter((node) => node.id !== data.nodeId));
@@ -141,6 +144,153 @@ const SchemaEditor = ({ id }: Props) => {
       socket.off('DIAGRAM:NODE_DELETED', handleNodeDeleted);
     };
   }, [socket, isConnected, setNodes]);
+
+  // Listen for node label changes from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleNodeLabelChanged = (data: {
+      nodeId: string;
+      label: string;
+    }) => {
+      if (data.nodeId) {
+        setNodes((nds) =>
+          nds.map((node) =>
+            node.id === data.nodeId
+              ? {
+                  ...node,
+                  data: {
+                    ...(node.data as CollectionNodeData['data']),
+                    label: data.label
+                  }
+                }
+              : node
+          )
+        );
+      }
+    };
+
+    socket.on('DIAGRAM:NODE_LABEL_CHANGED', handleNodeLabelChanged);
+
+    return () => {
+      socket.off('DIAGRAM:NODE_LABEL_CHANGED', handleNodeLabelChanged);
+    };
+  }, [socket, isConnected, setNodes]);
+
+  // Listen for node description changes from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleNodeDescriptionChanged = (data: {
+      nodeId: string;
+      description: string;
+    }) => {
+      if (data.nodeId) {
+        setNodes((nds) =>
+          nds.map((node) =>
+            node.id === data.nodeId
+              ? {
+                  ...node,
+                  data: {
+                    ...(node.data as CollectionNodeData['data']),
+                    description: data.description
+                  }
+                }
+              : node
+          )
+        );
+      }
+    };
+
+    socket.on('DIAGRAM:NODE_DESCRIPTION_CHANGED', handleNodeDescriptionChanged);
+
+    return () => {
+      socket.off(
+        'DIAGRAM:NODE_DESCRIPTION_CHANGED',
+        handleNodeDescriptionChanged
+      );
+    };
+  }, [socket, isConnected, setNodes]);
+
+  // Listen for new fields to be added to a node from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleNodeFieldsAdded = (data: {
+      nodeId: string;
+      fields: Field[];
+    }) => {
+      if (data.nodeId) {
+        setNodes((nds) =>
+          nds.map((node) =>
+            node.id === data.nodeId
+              ? {
+                  ...node,
+                  data: {
+                    ...(node.data as CollectionNodeData['data']),
+                    fields: [
+                      ...(node.data as CollectionNodeData['data']).fields,
+                      ...data.fields
+                    ]
+                  }
+                }
+              : node
+          )
+        );
+      }
+    };
+
+    socket.on('DIAGRAM:ADD_NODE_FIELDS', handleNodeFieldsAdded);
+
+    return () => {
+      socket.off('DIAGRAM:ADD_NODE_FIELDS', handleNodeFieldsAdded);
+    };
+  }, [socket, isConnected, setNodes]);
+
+  // Listen for fields to be deleted from a node from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleNodeFieldsDeleted = (data: {
+      nodeId: string;
+      fieldId: string;
+    }) => {
+      if (data.nodeId) {
+        const updatedNodes = nodes.map((node) =>
+          node.id === data.nodeId
+            ? {
+                ...node,
+                data: {
+                  ...(node.data as CollectionNodeData['data']),
+                  fields: (
+                    node.data as CollectionNodeData['data']
+                  ).fields.filter((field: Field) => field.id !== data.fieldId)
+                }
+              }
+            : node
+        );
+
+        setNodes(updatedNodes);
+
+        // If a user had selected that node, update the selected node too
+        if (selectedNode?.id === data.nodeId) {
+          dispatch(
+            updateSelectedNode(
+              updatedNodes.find(
+                (n) => n.id === data.nodeId
+              ) as CollectionNodeData
+            )
+          );
+        }
+      }
+    };
+
+    socket.on('DIAGRAM:DELETE_NODE_FIELD', handleNodeFieldsDeleted);
+
+    return () => {
+      socket.off('DIAGRAM:DELETE_NODE_FIELD', handleNodeFieldsDeleted);
+    };
+  }, [socket, isConnected, nodes, setNodes, selectedNode, dispatch]);
 
   // Handle connections between nodes
   const onConnect = useCallback(
@@ -269,6 +419,7 @@ const SchemaEditor = ({ id }: Props) => {
           setNodes={setNodes}
           nodes={nodes}
           edges={edges}
+          projectId={id}
         />
       </div>
       <ReactFlowProvider>

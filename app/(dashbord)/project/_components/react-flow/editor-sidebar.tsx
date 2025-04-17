@@ -30,6 +30,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { useSocket } from '@/context/socket-provider';
 import {
   closeSidebar,
   toggleSidebar,
@@ -47,10 +48,12 @@ type Props = {
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
   nodes: Node[];
   edges: Edge[];
+  projectId: string;
 };
 
-const EditorSidebar = ({ nodes, setNodes }: Props) => {
+const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
   const dispatch = useAppDispatch();
+  const { emit, isConnected } = useSocket();
 
   const selectedNode = useAppSelector(
     (state) => state.schemaEditorUI.selectedNode
@@ -118,6 +121,15 @@ const EditorSidebar = ({ nodes, setNodes }: Props) => {
           }
         };
 
+        // Emit event to update other clients
+        if (isConnected) {
+          emit('DIAGRAM:ADD_NODE_FIELDS', {
+            projectId,
+            nodeId: node.id,
+            fields: [newField]
+          });
+        }
+
         dispatch(updateSelectedNode(newNode as CollectionNodeData));
 
         return newNode;
@@ -142,6 +154,17 @@ const EditorSidebar = ({ nodes, setNodes }: Props) => {
           }
         };
         dispatch(updateSelectedNode(updatedNode as CollectionNodeData));
+
+        // Emit event to update other clients
+        if (isConnected) {
+          console.log('Emitting DIAGRAM:NODE_LABEL_CHANGED event');
+          emit('DIAGRAM:NODE_LABEL_CHANGED', {
+            projectId,
+            nodeId: node.id,
+            label: name
+          });
+        }
+
         return updatedNode;
       }
       return node;
@@ -162,6 +185,16 @@ const EditorSidebar = ({ nodes, setNodes }: Props) => {
           }
         };
         dispatch(updateSelectedNode(updatedNode as CollectionNodeData));
+
+        // Emit event to update other clients
+        if (isConnected) {
+          emit('DIAGRAM:NODE_DESCRIPTION_CHANGED', {
+            projectId,
+            nodeId: node.id,
+            description: description
+          });
+        }
+
         return updatedNode;
       }
       return node;
@@ -184,7 +217,17 @@ const EditorSidebar = ({ nodes, setNodes }: Props) => {
             fields: updatedFields
           }
         };
+
         dispatch(updateSelectedNode(updatedNode as CollectionNodeData));
+
+        // Emit delete field event to other clients
+        if (isConnected) {
+          emit('DIAGRAM:DELETE_NODE_FIELD', {
+            projectId,
+            nodeId: node.id,
+            fieldId
+          });
+        }
         return updatedNode;
       }
       return node;
