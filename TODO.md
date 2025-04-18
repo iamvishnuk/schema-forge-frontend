@@ -10,7 +10,9 @@
 - [x] Delete Project
 - [x] Project details page
 - [x] react flow full screen mode
-- [] custom panel
+- [x] custom panel
 - [x] sidebar with keyboard toggle
 - [] Change the sidebar short cut key
-- [] Add existing schema to data type
+- [] Add existing schema to data type when array of object is there
+- [] Add array of object in data types
+- [] Fix multiple cursor position issue

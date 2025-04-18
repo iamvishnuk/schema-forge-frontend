@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Edge, type Node } from '@xyflow/react';
 import { FileCode, Key, Trash2, Workflow } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
@@ -54,6 +54,8 @@ type Props = {
 const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
   const dispatch = useAppDispatch();
   const { emit, isConnected } = useSocket();
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedNode = useAppSelector(
     (state) => state.schemaEditorUI.selectedNode
@@ -157,7 +159,6 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
 
         // Emit event to update other clients
         if (isConnected) {
-          console.log('Emitting DIAGRAM:NODE_LABEL_CHANGED event');
           emit('DIAGRAM:NODE_LABEL_CHANGED', {
             projectId,
             nodeId: node.id,
@@ -269,7 +270,10 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
           className='h-full flex-1 overflow-y-auto'
         >
           {selectedNode && (
-            <div className='mt-5'>
+            <div
+              className='mt-5'
+              ref={containerRef}
+            >
               <h3 className='w-full border-b pb-1 font-medium dark:text-white'>
                 Schema
               </h3>
@@ -337,9 +341,7 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent
-                              position='popper'
-                              sideOffset={5}
-                              className='z-[9999]'
+                              container={containerRef.current || undefined}
                             >
                               {MONGO_DATA_TYPES.map((type, index) => (
                                 <SelectItem

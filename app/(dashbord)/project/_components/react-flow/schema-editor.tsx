@@ -11,6 +11,7 @@ import {
   MarkerType,
   type Node,
   NodeTypes,
+  OnNodeDrag,
   ReactFlow,
   ReactFlowProvider,
   useEdgesState,
@@ -18,6 +19,7 @@ import {
 } from '@xyflow/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { v4 as uuid } from 'uuid';
 
 import { useAuthContext } from '@/context/auth-provider';
 import { useSocket } from '@/context/socket-provider';
@@ -39,6 +41,7 @@ import collectionNode, {
   CollectionNodeData,
   Field
 } from './nodes/collection-node';
+import RemoteCursors from './RemoteCursors';
 
 // Define empty initial states
 const emptyNodes: Node[] = [];
@@ -54,6 +57,7 @@ const SchemaEditor = ({ id }: Props) => {
   const dispatch = useAppDispatch();
   const { socket, emit, isConnected } = useSocket();
   const { user } = useAuthContext();
+  const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
 
   const selectedNode = useAppSelector(
     (state) => state.schemaEditorUI.selectedNode
@@ -63,7 +67,6 @@ const SchemaEditor = ({ id }: Props) => {
   useEffect(() => {
     if (!socket || !isConnected || !user) return;
 
-    console.log('Emitting PROJECT:JOIN event');
     emit('PROJECT:JOIN', { projectId: id, userName: user?.name });
   }, [socket, isConnected, id, user, emit]);
 
@@ -292,23 +295,89 @@ const SchemaEditor = ({ id }: Props) => {
     };
   }, [socket, isConnected, nodes, setNodes, selectedNode, dispatch]);
 
+  // Listen for node drag events from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+    const handleNodeDrag = (data: {
+      nodeId: string;
+      position: { x: number; y: number };
+    }) => {
+      if (data.nodeId) {
+        setNodes((nds) =>
+          nds.map((node) =>
+            node.id === data.nodeId
+              ? {
+                  ...node,
+                  position: data.position
+                }
+              : node
+          )
+        );
+      }
+    };
+
+    socket.on('DIAGRAM:NODE_DRAG', handleNodeDrag);
+    return () => {
+      socket.off('DIAGRAM:NODE_DRAG', handleNodeDrag);
+    };
+  }, [socket, isConnected, setNodes]);
+
+  // Listen for add edge event from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleEdgeAdded = (data: Edge) => {
+      if (data) {
+        setEdges((eds) => eds.concat(data));
+      }
+    };
+
+    socket.on('DIAGRAM:EDGE_ADDED', handleEdgeAdded);
+
+    return () => {
+      socket.off('DIAGRAM:EDGE_ADDED', handleEdgeAdded);
+    };
+  }, [isConnected, socket, setEdges]);
+
+  // Listen for the edge deletion event from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+    const handleEdgeDeletion = (data: { edgeId: string }) => {
+      if (data.edgeId) {
+        setEdges((eds) => eds.filter((edge) => edge.id !== data.edgeId));
+      }
+    };
+
+    socket.on('DIAGRAM:EDGE_DELETED', handleEdgeDeletion);
+    return () => {
+      socket.off('DIAGRAM:EDGE_DELETED', handleEdgeDeletion);
+    };
+  }, [socket, isConnected, setEdges]);
+
   // Handle connections between nodes
   const onConnect = useCallback(
-    (params: Connection) =>
-      setEdges((eds) =>
-        addEdge(
-          {
-            ...params,
-            animated: true,
-            type: 'step',
-            markerEnd: {
-              type: MarkerType.ArrowClosed
-            }
-          },
-          eds
-        )
-      ),
-    [setEdges]
+    (params: Connection) => {
+      const newEdge: Edge = {
+        ...params,
+        id: uuid(),
+        animated: true,
+        type: 'step',
+        markerEnd: {
+          type: MarkerType.ArrowClosed
+        },
+        style: {
+          stroke: '#155dfc'
+        }
+      };
+      setEdges((eds) => addEdge(newEdge, eds));
+      if (isConnected) {
+        emit('DIAGRAM:EDGE_ADDED', {
+          projectId: id,
+          edge: newEdge
+        });
+      }
+    },
+    [setEdges, emit, id, isConnected]
   );
 
   // Handle node selection
@@ -318,6 +387,7 @@ const SchemaEditor = ({ id }: Props) => {
       const nodeToSelect = createSafeNodeCopy(node);
 
       dispatch(setSelectedNode(nodeToSelect as CollectionNodeData));
+      dispatch(setSelectedEdge(null));
 
       // Update nodes to indicate which one is selected - ensure proper immutability
       setNodes((nds) =>
@@ -339,7 +409,9 @@ const SchemaEditor = ({ id }: Props) => {
       // Create a clean copy of the edge without potential read-only properties
       const edgeToSelect = createSafeEdgeCopy(edge);
 
+      dispatch(setSelectedNode(null));
       dispatch(setSelectedEdge(edgeToSelect));
+      dispatch(closeSidebar());
 
       // Clear selection state from all nodes - ensure proper immutability
       setNodes((prevNodes) =>
@@ -400,7 +472,63 @@ const SchemaEditor = ({ id }: Props) => {
     }
   };
 
-  console.log('isSidebarOpen', isSidebarOpen);
+  // Track mouse movement inside the editor
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (!socket || !isConnected || !user || !reactFlowWrapperRef.current)
+        return;
+
+      // Get mouse position relative to the ReactFlow wrapper
+      const rect = reactFlowWrapperRef.current.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      // Send the raw coordinates instead of applying an offset
+      // This will be transformed properly in the UserCursor component
+      emit('EDITOR:MOUSE_MOVE', {
+        projectId: id,
+        userId: user._id,
+        userName: user.name,
+        position: { x, y }
+      });
+    },
+    [socket, isConnected, id, user, emit]
+  );
+
+  const onNodeDrag: OnNodeDrag = useCallback(
+    (_, node) => {
+      if (isConnected) {
+        emit('DIAGRAM:NODE_DRAG', {
+          projectId: id,
+          nodeId: node.id,
+          position: node.position
+        });
+      }
+    },
+    [emit, id, isConnected]
+  );
+
+  const onNodeDragStop: OnNodeDrag = useCallback(
+    (_, node) => {
+      if (isConnected) {
+        emit('DIAGRAM:NODE_DRAG_STOP', {
+          projectId: id,
+          nodeId: node.id,
+          position: node.position
+        });
+      }
+    },
+    [emit, isConnected, id]
+  );
+
+  // // handle Edge changes
+  // const onEdgesChanges: OnEdgesChange = useCallback(
+  //   (changes: EdgeChange[]) => {
+  //     console.log('changes ==>', changes);
+  //     setEdges((eds) => eds.map((edge) => ({ ...edge, ...changes })));
+  //   },
+  //   [setEdges]
+  // );
 
   return (
     <div
@@ -423,32 +551,41 @@ const SchemaEditor = ({ id }: Props) => {
         />
       </div>
       <ReactFlowProvider>
-        <ReactFlow
-          className='h-full w-full'
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          onNodeClick={onNodeClick}
-          onEdgeClick={onEdgeClick}
-          onPaneClick={onPaneClick}
-          fitView
-          attributionPosition='bottom-right'
+        <div
+          ref={reactFlowWrapperRef}
+          className='relative h-full w-full'
+          onMouseMove={handleMouseMove}
         >
-          <Controls />
-          <Background />
-          <EditorPanel
-            toggleFullScreen={toggleFullScreen}
-            isFullScreen={isFullScreen}
-            setNodes={setNodes}
+          <RemoteCursors projectId={id} />
+          <ReactFlow
+            className='h-full w-full'
             nodes={nodes}
-            setEdges={setEdges}
             edges={edges}
-            projectId={id}
-          />
-        </ReactFlow>
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            onNodeClick={onNodeClick}
+            onEdgeClick={onEdgeClick}
+            onPaneClick={onPaneClick}
+            fitView
+            attributionPosition='bottom-right'
+            onNodeDrag={onNodeDrag}
+            onNodeDragStop={onNodeDragStop}
+          >
+            <Controls />
+            <Background />
+            <EditorPanel
+              toggleFullScreen={toggleFullScreen}
+              isFullScreen={isFullScreen}
+              setNodes={setNodes}
+              nodes={nodes}
+              setEdges={setEdges}
+              edges={edges}
+              projectId={id}
+            />
+          </ReactFlow>
+        </div>
       </ReactFlowProvider>
     </div>
   );
