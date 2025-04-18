@@ -147,17 +147,32 @@ export const CreateProjectSchema = z
     }
   );
 
-export const SchemaPropertyValidation = z.object({
-  name: z
-    .string({ required_error: 'Name is required' })
-    .trim()
-    .min(1, { message: 'Name is required' }),
-  type: z
-    .string({ required_error: 'Type is required' })
-    .min(1, { message: 'Type is required' }),
-  required: z.boolean().optional(),
-  isPrimary: z.boolean().optional(),
-  isUnique: z.boolean().optional(),
-  index: z.boolean().optional(),
-  ref: z.string().optional()
-});
+export const SchemaPropertyValidation = z
+  .object({
+    name: z
+      .string({ required_error: 'Name is required' })
+      .trim()
+      .min(1, { message: 'Name is required' }),
+    type: z
+      .string({ required_error: 'Type is required' })
+      .min(1, { message: 'Type is required' }),
+    required: z.boolean().optional(),
+    isPrimary: z.boolean().optional(),
+    isUnique: z.boolean().optional(),
+    index: z.boolean().optional(),
+    ref: z.string().optional(),
+    arrayType: z.any().optional()
+  })
+  .refine(
+    (data) => {
+      if (data.type !== 'Array') return true;
+
+      if (data.arrayType) return true;
+
+      return false;
+    },
+    {
+      message: 'Array type must be specified when type is Array',
+      path: ['arrayType']
+    }
+  );

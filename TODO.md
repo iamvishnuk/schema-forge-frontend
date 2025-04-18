@@ -13,6 +13,6 @@
 - [x] custom panel
 - [x] sidebar with keyboard toggle
 - [] Change the sidebar short cut key
-- [] Add existing schema to data type when array of object is there
-- [] Add array of object in data types
+- [x] Add existing schema to data type when array of object is there
+- [x] Add array of object in data types
 - [] Fix multiple cursor position issue

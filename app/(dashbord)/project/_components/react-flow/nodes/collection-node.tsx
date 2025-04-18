@@ -15,6 +15,7 @@ export interface Field {
   isUnique?: boolean;
   index?: boolean;
   ref?: string;
+  arrayType?: any;
 }
 
 export type CollectionNodeData = Node<{
@@ -71,7 +72,14 @@ function CollectionNode({ data }: NodeProps<CollectionNodeData>) {
               <span className='font-medium'>{field.name}</span>
             </div>
             <div className='flex items-center text-xs text-gray-500'>
-              <span>{field.type}</span>
+              {field.type === 'Array' ? (
+                <span>
+                  [<span className='italic'>{field.arrayType}</span> ]
+                </span>
+              ) : (
+                <span>{field.type}</span>
+              )}
+
               {field.required && (
                 <span className='ml-1 text-red-500 italic'>R</span>
               )}
@@ -93,6 +101,21 @@ function CollectionNode({ data }: NodeProps<CollectionNodeData>) {
                 style={{ top: '50%', right: -20 }}
               />
             )}
+
+            {/* Add connection handles for array fields that reference other nodes */}
+            {field.type === 'Array' &&
+              field.arrayType &&
+              !field.arrayType.match(
+                /^(String|Number|Date|Buffer|Boolean|Mixed|ObjectId|Decimal128|Map|Schema|UUID|BigInt)$/
+              ) && (
+                <Handle
+                  type='source'
+                  position={Position.Right}
+                  id={`${field.name}-source`}
+                  className='h-3 w-3 !bg-blue-500'
+                  style={{ top: '50%', right: -20 }}
+                />
+              )}
           </div>
         ))}
       </div>
