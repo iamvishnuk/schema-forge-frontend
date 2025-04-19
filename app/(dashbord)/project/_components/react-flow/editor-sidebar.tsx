@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Edge, type Node } from '@xyflow/react';
+import { type Edge, MarkerType, type Node } from '@xyflow/react';
 import { FileCode, Key, Trash2, Workflow } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
@@ -51,9 +51,17 @@ type Props = {
   projectId: string;
 };
 
-const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
+const EditorSidebar = ({
+  nodes,
+  setNodes,
+  setEdges,
+  projectId,
+  edges
+}: Props) => {
   const dispatch = useAppDispatch();
   const { emit, isConnected } = useSocket();
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedNode = useAppSelector(
     (state) => state.schemaEditorUI.selectedNode
@@ -86,9 +94,71 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
       isPrimary: false,
       isUnique: false,
       index: false,
-      ref: ''
+      ref: '',
+      arrayType: undefined
     }
   });
+
+  // Watch the type field and arrayType field to identify when a node is selected as array type
+  const selectedType = form.watch('type');
+
+  // Function to check if a string is in the list of mongo data types
+  const isMongoDataType = (type?: string) => {
+    if (!type) return false;
+    return MONGO_DATA_TYPES.some((dataType) => dataType.value === type);
+  };
+
+  // Create a function to add an edge between nodes when array relationship is defined
+  const createRelationshipEdge = (
+    sourceNode: CollectionNodeData,
+    targetNodeLabel: string,
+    fieldName: string
+  ) => {
+    // Find the target node by label
+    const targetNode = nodes.find(
+      (node) => node.data.label === targetNodeLabel
+    );
+    if (!targetNode) return;
+
+    // Create new edge
+    const newEdge: Edge = {
+      id: uuid(),
+      source: sourceNode.id,
+      target: targetNode.id,
+      sourceHandle: `${fieldName}-source`,
+      animated: true,
+      type: 'step',
+      label: 'Contain Many',
+      style: {
+        stroke: '#155dfc'
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed
+      }
+    };
+
+    // Add the edge
+    setEdges((eds) => {
+      // Check if an edge already exists between these nodes with the same sourceHandle
+      const edgeExists = eds.some(
+        (edge) =>
+          edge.source === sourceNode.id &&
+          edge.target === targetNode.id &&
+          edge.sourceHandle === `${fieldName}-source`
+      );
+
+      if (edgeExists) return eds;
+      return [...eds, newEdge];
+    });
+
+    // Emit edge added event to other clients
+    if (isConnected) {
+      emit('DIAGRAM:EDGE_ADDED', {
+        projectId,
+        edge: newEdge
+      });
+    }
+  };
 
   // function to add a new field to the selected node
   const addFieldToNode = (data: z.infer<typeof SchemaPropertyValidation>) => {
@@ -101,6 +171,7 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
           id: uuid(),
           name: data.name,
           type: data.type,
+          arrayType: data.type === 'Array' ? data.arrayType : undefined,
           required: data.required,
           isPrimary: data.isPrimary,
           isUnique: data.isUnique,
@@ -132,6 +203,20 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
 
         dispatch(updateSelectedNode(newNode as CollectionNodeData));
 
+        // If the field is an array type and arrayType is not a mongo data type,
+        // then it's referring to another node - create an edge
+        if (
+          data.type === 'Array' &&
+          data.arrayType &&
+          !isMongoDataType(data.arrayType)
+        ) {
+          createRelationshipEdge(
+            newNode as CollectionNodeData,
+            data.arrayType,
+            data.name
+          );
+        }
+
         return newNode;
       }
       return node;
@@ -157,7 +242,6 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
 
         // Emit event to update other clients
         if (isConnected) {
-          console.log('Emitting DIAGRAM:NODE_LABEL_CHANGED event');
           emit('DIAGRAM:NODE_LABEL_CHANGED', {
             projectId,
             nodeId: node.id,
@@ -220,6 +304,32 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
 
         dispatch(updateSelectedNode(updatedNode as CollectionNodeData));
 
+        // check if the field is an array type and remove the edge
+        if (node.data.fields) {
+          const field = (node.data as CollectionNodeData['data']).fields.find(
+            (field: Field) => field.id === fieldId
+          );
+          if (field) {
+            const edgeToRemove = edges.find(
+              (edge) =>
+                edge.source === node.id &&
+                edge.sourceHandle === `${field.name}-source`
+            );
+            if (edgeToRemove) {
+              setEdges((eds) =>
+                eds.filter((edge) => edge.id !== edgeToRemove.id)
+              );
+              // Emit event to remove the edge from other clients
+              if (isConnected) {
+                emit('DIAGRAM:EDGE_DELETED', {
+                  projectId,
+                  edgeId: edgeToRemove.id
+                });
+              }
+            }
+          }
+        }
+
         // Emit delete field event to other clients
         if (isConnected) {
           emit('DIAGRAM:DELETE_NODE_FIELD', {
@@ -269,7 +379,10 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
           className='h-full flex-1 overflow-y-auto'
         >
           {selectedNode && (
-            <div className='mt-5'>
+            <div
+              className='mt-5'
+              ref={containerRef}
+            >
               <h3 className='w-full border-b pb-1 font-medium dark:text-white'>
                 Schema
               </h3>
@@ -329,7 +442,7 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger className='w-full'>
@@ -337,9 +450,7 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent
-                              position='popper'
-                              sideOffset={5}
-                              className='z-[9999]'
+                              container={containerRef.current || undefined}
                             >
                               {MONGO_DATA_TYPES.map((type, index) => (
                                 <SelectItem
@@ -355,6 +466,59 @@ const EditorSidebar = ({ nodes, setNodes, projectId }: Props) => {
                         </FormItem>
                       )}
                     />
+
+                    {selectedType === 'Array' && (
+                      <FormField
+                        control={form.control}
+                        name='arrayType'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='gap-1'>
+                              Array Type<span className='text-red-500'>*</span>
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className='w-full'>
+                                  <SelectValue placeholder='Select data type' />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent
+                                container={containerRef.current || undefined}
+                              >
+                                {[
+                                  ...nodes
+                                    .filter(
+                                      (node) =>
+                                        node.data.label !==
+                                        selectedNode.data.label
+                                    )
+                                    .map((node) => {
+                                      return {
+                                        value: node.data.label as string,
+                                        label: node.data.label as string
+                                      };
+                                    }),
+                                  ...MONGO_DATA_TYPES.filter(
+                                    (type) => type.value !== 'Array'
+                                  )
+                                ].map((type, index) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={type.value}
+                                  >
+                                    {type.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
 
                     <FormField
                       control={form.control}

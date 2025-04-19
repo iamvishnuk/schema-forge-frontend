@@ -22,6 +22,7 @@ import {
 import { useSocket } from '@/context/socket-provider';
 import {
   closeSidebar,
+  setSelectedEdge,
   setSelectedNode,
   toggleSidebar
 } from '@/features/schema-editor/schemaEditorUI';
@@ -43,13 +44,18 @@ const EditorPanel = ({
   toggleFullScreen,
   isFullScreen,
   setNodes,
+  setEdges,
   nodes,
+  edges,
   projectId
 }: Props) => {
   const dispatch = useAppDispatch();
   const { emit, isConnected } = useSocket();
   const selectedNode = useAppSelector(
     (state) => state.schemaEditorUI.selectedNode
+  );
+  const selectedEdge = useAppSelector(
+    (state) => state.schemaEditorUI.selectedEdge
   );
 
   const addCollectionNode = useCallback(() => {
@@ -75,7 +81,6 @@ const EditorPanel = ({
 
     // Emit event to update other clients
     if (isConnected) {
-      console.log('Emitting DIAGRAM:NODE_ADDED event');
       emit('DIAGRAM:NODE_ADDED', {
         projectId,
         node: newNode
@@ -83,18 +88,43 @@ const EditorPanel = ({
     }
   }, [setNodes, nodes, emit, projectId, isConnected]);
 
-  const deleteCollectionNode = useCallback(() => {
-    if (!selectedNode) return;
-    const updatedNodes = nodes.filter((node) => node.id !== selectedNode.id);
-    setNodes(updatedNodes);
-    dispatch(setSelectedNode(null));
-    dispatch(closeSidebar());
+  const deleteCollectionNodeOrEdge = useCallback(() => {
+    if (!selectedNode && !selectedEdge) return;
 
-    if (isConnected) {
-      console.log('Emitting DIAGRAM:NODE_DELETED event');
-      emit('DIAGRAM:NODE_DELETED', { projectId, nodeId: selectedNode.id });
+    // if node is selected, delete the node
+    if (selectedNode) {
+      const updatedNodes = nodes.filter((node) => node.id !== selectedNode.id);
+      setNodes(updatedNodes);
+      dispatch(setSelectedNode(null));
+      dispatch(closeSidebar());
+
+      if (isConnected) {
+        emit('DIAGRAM:NODE_DELETED', { projectId, nodeId: selectedNode.id });
+      }
     }
-  }, [selectedNode, nodes, setNodes, dispatch, emit, isConnected, projectId]);
+
+    // if edge is selected, delete the edge
+    if (selectedEdge) {
+      const updateEdges = edges.filter((edges) => edges.id !== selectedEdge.id);
+      setEdges(updateEdges);
+      dispatch(setSelectedEdge(null));
+
+      if (isConnected) {
+        emit('DIAGRAM:EDGE_DELETED', { projectId, edgeId: selectedEdge.id });
+      }
+    }
+  }, [
+    selectedNode,
+    selectedEdge,
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+    dispatch,
+    emit,
+    isConnected,
+    projectId
+  ]);
 
   return (
     <Panel
@@ -165,8 +195,8 @@ const EditorPanel = ({
             <Button
               variant='outline'
               size='icon'
-              onClick={deleteCollectionNode}
-              disabled={!selectedNode}
+              onClick={deleteCollectionNodeOrEdge}
+              disabled={!selectedNode && !selectedEdge}
             >
               <Trash2 className='h-4 w-4' />
             </Button>
