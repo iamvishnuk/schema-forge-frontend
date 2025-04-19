@@ -22,7 +22,18 @@ export const createSafeNodeCopy = (node: Node) => {
  */
 export const createSafeEdgeCopy = (edge: Edge) => {
   // Extract only the properties we want to keep
-  const { id, source, target, sourceHandle, targetHandle, type, data } = edge;
+  const {
+    id,
+    source,
+    target,
+    sourceHandle,
+    targetHandle,
+    type,
+    data,
+    style,
+    label,
+    animated
+  } = edge;
 
   // Create a new edge object with only the properties we need
   return {
@@ -32,7 +43,10 @@ export const createSafeEdgeCopy = (edge: Edge) => {
     sourceHandle,
     targetHandle,
     type,
-    data: data ? { ...data } : undefined
+    data: data ? { ...data } : undefined,
+    style: style ? { ...style } : undefined,
+    label,
+    animated
   };
 };
 
