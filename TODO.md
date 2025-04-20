@@ -16,3 +16,10 @@
 - [x] Add existing schema to data type when array of object is there
 - [x] Add array of object in data types
 - [] Fix multiple cursor position issue
+- [x] Fix socket issue while switching the tab
+- [] Panel for changing the property of the edge like (color, animation, type)
+- [] Team Members permission inside the project
+- [] Invite Members to the project using links
+- [] Display all the collection in the project
+- [] Code generation
+- [] Set short cut key according to the user preference

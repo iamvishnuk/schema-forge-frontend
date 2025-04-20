@@ -25,3 +25,11 @@ export const MONGO_COMMON_SCHEMA_OPTIONS = [
   // { label: 'Get', value: 'get', type: 'function' },
   // { label: 'Set', value: 'set', type: 'function' }
 ] as const;
+
+export const EDGE_TYPES = [
+  { label: 'Bezier', value: 'default' },
+  { label: 'Straight', value: 'straight' },
+  { label: 'Step', value: 'step' },
+  { label: 'Smooth Step', value: 'smoothstep' },
+  { label: 'Simple Bezier', value: 'simplebezier' }
+] as const;

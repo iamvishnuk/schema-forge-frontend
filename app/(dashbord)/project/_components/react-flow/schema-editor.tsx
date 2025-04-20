@@ -35,6 +35,7 @@ import { createSafeEdgeCopy, createSafeNodeCopy } from '@/lib/node-utils';
 import { cn } from '@/lib/utils';
 
 import ConnectedUsers from '../ConnectedUsers';
+import EditorEdgeSideBar from './editor-edge-sidebar';
 import EditorPanel from './editor-panel';
 import EditorSidebar from './editor-sidebar';
 import collectionNode, {
@@ -59,8 +60,8 @@ const SchemaEditor = ({ id }: Props) => {
   const { user } = useAuthContext();
   const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
 
-  const selectedNode = useAppSelector(
-    (state) => state.schemaEditorUI.selectedNode
+  const { selectedNode, isEdgeSidebarOpen, isSidebarOpen } = useAppSelector(
+    (state) => state.schemaEditorUI
   );
 
   // Join project when socket connects
@@ -68,11 +69,15 @@ const SchemaEditor = ({ id }: Props) => {
     if (!socket || !isConnected || !user) return;
 
     emit('PROJECT:JOIN', { projectId: id, userName: user?.name });
-  }, [socket, isConnected, id, user, emit]);
 
-  const isSidebarOpen = useAppSelector(
-    (state) => state.schemaEditorUI.isSidebarOpen
-  );
+    return () => {
+      if (socket) {
+        socket.emit('PROJECT:LEAVE', { projectId: id, userName: user?.name });
+        socket.off('PROJECT:LEAVE');
+        socket.off('PROJECT:JOIN');
+      }
+    };
+  }, [socket, isConnected, id, user, emit]);
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -354,6 +359,48 @@ const SchemaEditor = ({ id }: Props) => {
     };
   }, [socket, isConnected, setEdges]);
 
+  // Listen for the edge update event from other clients
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleEdgeUpdate = (data: {
+      edgeId: string;
+      property: string;
+      value: any;
+    }) => {
+      if (data.edgeId) {
+        setEdges((eds) =>
+          eds.map((edge) => {
+            if (edge.id === data.edgeId) {
+              let updatedEdge;
+              // For label property, ensure we're not creating new key-pairs
+              if (data.property === 'label') {
+                updatedEdge = {
+                  ...edge,
+                  label: data.value // Explicitly update the label property
+                };
+              }
+
+              // Handle other properties normally
+              updatedEdge = {
+                ...edge,
+                [data.property]: data.value
+              };
+
+              return updatedEdge;
+            }
+            return edge;
+          })
+        );
+      }
+    };
+
+    socket.on('DIAGRAM:EDGE_UPDATE', handleEdgeUpdate);
+    return () => {
+      socket.off('DIAGRAM:EDGE_UPDATE', handleEdgeUpdate);
+    };
+  }, [socket, isConnected, setEdges]);
+
   // Handle connections between nodes
   const onConnect = useCallback(
     (params: Connection) => {
@@ -362,11 +409,13 @@ const SchemaEditor = ({ id }: Props) => {
         id: uuid(),
         animated: true,
         type: 'step',
+        label: '',
         markerEnd: {
           type: MarkerType.ArrowClosed
         },
         style: {
-          stroke: '#155dfc'
+          stroke: '#155dfc',
+          strokeWidth: 1
         }
       };
       setEdges((eds) => addEdge(newEdge, eds));
@@ -521,15 +570,6 @@ const SchemaEditor = ({ id }: Props) => {
     [emit, isConnected, id]
   );
 
-  // // handle Edge changes
-  // const onEdgesChanges: OnEdgesChange = useCallback(
-  //   (changes: EdgeChange[]) => {
-  //     console.log('changes ==>', changes);
-  //     setEdges((eds) => eds.map((edge) => ({ ...edge, ...changes })));
-  //   },
-  //   [setEdges]
-  // );
-
   return (
     <div
       className='relative flex h-[calc(100vh-220px)] w-full rounded-lg border shadow-md'
@@ -538,7 +578,7 @@ const SchemaEditor = ({ id }: Props) => {
       <div
         className={cn(
           'bg-muted/30 h-full overflow-x-hidden border-r transition-all duration-300 ease-in-out',
-          isSidebarOpen ? 'min-w-[400px]' : 'w-0'
+          isSidebarOpen ? 'min-w-[350px]' : 'w-0'
         )}
       >
         <ConnectedUsers className='absolute top-4 right-4' />
@@ -550,6 +590,22 @@ const SchemaEditor = ({ id }: Props) => {
           projectId={id}
         />
       </div>
+
+      <div
+        className={cn(
+          'bg-muted/30 h-full overflow-x-hidden border-r transition-all duration-300 ease-in-out',
+          isEdgeSidebarOpen ? 'min-w-[350px]' : 'w-0'
+        )}
+      >
+        <EditorEdgeSideBar
+          setEdges={setEdges}
+          setNodes={setNodes}
+          nodes={nodes}
+          edges={edges}
+          projectId={id}
+        />
+      </div>
+
       <ReactFlowProvider>
         <div
           ref={reactFlowWrapperRef}

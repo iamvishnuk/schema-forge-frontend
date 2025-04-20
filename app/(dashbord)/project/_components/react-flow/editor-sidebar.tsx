@@ -130,7 +130,8 @@ const EditorSidebar = ({
       type: 'step',
       label: 'Contain Many',
       style: {
-        stroke: '#155dfc'
+        stroke: '#155dfc',
+        strokeWidth: 1
       },
       markerEnd: {
         type: MarkerType.ArrowClosed
@@ -378,7 +379,7 @@ const EditorSidebar = ({
           value='schemaDetails'
           className='h-full flex-1 overflow-y-auto'
         >
-          {selectedNode && (
+          {selectedNode ? (
             <div
               className='mt-5'
               ref={containerRef}
@@ -625,6 +626,12 @@ const EditorSidebar = ({
                   </div>
                 ))}
               </div>
+            </div>
+          ) : (
+            <div>
+              <p className='mt-10 text-center italic'>
+                Please select a node / Schema to view its details.
+              </p>
             </div>
           )}
         </TabsContent>

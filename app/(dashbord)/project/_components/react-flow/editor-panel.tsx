@@ -9,7 +9,7 @@ import {
   Save,
   Trash2
 } from 'lucide-react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { Button } from '@/components/ui/button';
@@ -57,6 +57,28 @@ const EditorPanel = ({
   const selectedEdge = useAppSelector(
     (state) => state.schemaEditorUI.selectedEdge
   );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // ctrl + shift + n
+      if (event.ctrlKey && event.shiftKey && event.key === 'N') {
+        event.preventDefault();
+        addCollectionNode();
+      }
+
+      // ctrl + shift + B
+      if (event.ctrlKey && event.shiftKey && event.key === 'B') {
+        event.preventDefault();
+        dispatch(toggleSidebar());
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
   const addCollectionNode = useCallback(() => {
     const newNode: Node = {
@@ -201,7 +223,7 @@ const EditorPanel = ({
               <Trash2 className='h-4 w-4' />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Delete Schema</TooltipContent>
+          <TooltipContent>Delete Schema/connection</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </Panel>
