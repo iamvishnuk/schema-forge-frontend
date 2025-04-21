@@ -527,18 +527,24 @@ const SchemaEditor = ({ id }: Props) => {
       if (!socket || !isConnected || !user || !reactFlowWrapperRef.current)
         return;
 
-      // Get mouse position relative to the ReactFlow wrapper
-      const rect = reactFlowWrapperRef.current.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+      // Get the ReactFlow instance to access panning and zooming info
+      const reactFlowBounds =
+        reactFlowWrapperRef.current.getBoundingClientRect();
 
-      // Send the raw coordinates instead of applying an offset
-      // This will be transformed properly in the UserCursor component
+      // Get the relative mouse position inside the flow container
+      const relativeX = event.clientX - reactFlowBounds.left;
+      const relativeY = event.clientY - reactFlowBounds.top;
+
+      // Raw pointer coordinates - we'll let the receiving UserCursor component
+      // handle the transformation with viewport and zoom
       emit('EDITOR:MOUSE_MOVE', {
         projectId: id,
         userId: user._id,
         userName: user.name,
-        position: { x, y }
+        position: {
+          x: relativeX,
+          y: relativeY
+        }
       });
     },
     [socket, isConnected, id, user, emit]
