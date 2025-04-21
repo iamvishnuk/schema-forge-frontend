@@ -14,18 +14,16 @@ export const TEAM_ROLE_PERMISSIONS = {
     'team:delete',
     'team:change_member_roles',
     'team:remove_member',
-    'team:manage_settings',
-    'team:manage_projects'
+    'team:manage_settings'
   ],
   [TeamRoleEnum.ADMIN]: [
     'team:view',
     'team:invite',
     'team:update',
     'team:change_member_roles',
-    'team:remove_member',
-    'team:manage_projects'
+    'team:remove_member'
   ],
-  [TeamRoleEnum.MEMBER]: ['team:view', 'team:manage_projects'],
+  [TeamRoleEnum.EDITOR]: ['team:view'],
   [TeamRoleEnum.VIEWER]: ['team:view']
 } as const;
 

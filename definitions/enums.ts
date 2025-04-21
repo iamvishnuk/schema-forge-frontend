@@ -3,13 +3,13 @@
 export enum TeamRoleEnum {
   OWNER = 'owner',
   ADMIN = 'admin',
-  MEMBER = 'member',
+  EDITOR = 'editor',
   VIEWER = 'viewer'
 }
 
 export enum InviteTeamRoleEnum {
   ADMIN = 'admin',
-  MEMBER = 'member',
+  EDITOR = 'editor',
   VIEWER = 'viewer'
 }
 
