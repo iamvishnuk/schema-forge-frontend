@@ -8,6 +8,7 @@ import {
   ILogin,
   ILoginResponse,
   IProject,
+  IProjectWithTeamDetails,
   IRegister,
   IResetPassword,
   ISession,
@@ -125,7 +126,7 @@ export const getProjectsMutationFn = async (): Promise<
 > => await API.get('/project');
 
 export const updateProjectMutationFn = async (
-  data: ICreateProject & { projectId: string }
+  data: Partial<ICreateProject> & { projectId: string }
 ): Promise<APIResponse<IProject>> => {
   const { projectId, ...rest } = data;
   return await API.put(`/project/update/${projectId}`, rest);
@@ -133,3 +134,23 @@ export const updateProjectMutationFn = async (
 
 export const deleteProjectMutationFn = async (projectId: string) =>
   await API.delete(`/project/delete/${projectId}`);
+
+export const getProjectAssociatedTeamAndMembersMutationFn = async (
+  projectId: string
+): Promise<APIResponse<IProjectWithTeamDetails[]>> =>
+  await API.get(`/project/teams-and-members/${projectId}`);
+
+export const addTeamToProjectMutationFn = async (data: {
+  projectId: string;
+  teamIds: string[];
+}): Promise<APIResponse<IProject>> => await API.put('/project/add-team', data);
+
+export const removeTeamFromProjectMutationFn = async (data: {
+  projectId: string;
+  teamId: string;
+}): Promise<APIResponse<IProject>> =>
+  await API.put('/project/remove-team', data);
+
+export const getProjectDetailsByIdMutationFn = async (
+  id: string
+): Promise<APIResponse<IProject>> => await API.get(`/project/${id}`);

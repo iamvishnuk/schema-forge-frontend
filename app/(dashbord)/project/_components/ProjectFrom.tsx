@@ -261,7 +261,7 @@ const ProjectFrom = ({
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    disabled={createProjectMutation.isPending}
+                    disabled={createProjectMutation.isPending || isEdit}
                   >
                     <FormControl>
                       <SelectTrigger className='w-full'>

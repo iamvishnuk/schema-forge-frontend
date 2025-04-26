@@ -1,12 +1,10 @@
-import { ArrowLeft, Layers, Settings, Users, Workflow } from 'lucide-react';
-import Link from 'next/link';
+import { Layers, Settings, Users, Workflow } from 'lucide-react';
 import React from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import ProjectTeamManagement from '../_components/ProjectTeamManagement';
+import ProjectSetting from '../_components/ProjectSetting';
+import ProjectTeamAndAssociatedMembers from '../_components/ProjectTeamAndAssociatedMembers';
 import SchemaEditor from '../_components/react-flow/schema-editor';
 
 type Props = {
@@ -17,22 +15,6 @@ const page = async ({ params }: Props) => {
   const { id } = await params;
   return (
     <div className='h-full'>
-      <div className='mb-4 flex items-center'>
-        <Button
-          variant='ghost'
-          size='sm'
-          asChild
-          className='mr-4'
-        >
-          <Link href='/project'>
-            <ArrowLeft className='mr-2 h-4 w-4' />
-          </Link>
-        </Button>
-        <h1 className='text-3xl font-bold tracking-tight'>
-          Vishnu's Project 1
-        </h1>
-      </div>
-      <Separator className='mb-3' />
       <Tabs
         defaultValue='schema'
         className='w-full'
@@ -60,7 +42,10 @@ const page = async ({ params }: Props) => {
           <SchemaEditor id={id} />
         </TabsContent>
         <TabsContent value='team'>
-          <ProjectTeamManagement />
+          <ProjectTeamAndAssociatedMembers id={id} />
+        </TabsContent>
+        <TabsContent value='settings'>
+          <ProjectSetting id={id} />
         </TabsContent>
       </Tabs>
     </div>

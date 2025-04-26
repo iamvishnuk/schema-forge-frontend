@@ -176,3 +176,20 @@ export const SchemaPropertyValidation = z
       path: ['arrayType']
     }
   );
+
+export const AddTeamToProjectSchema = z.object({
+  teamIds: z.array(z.string()).min(1, { message: 'Select at least one team' })
+});
+
+export const ProjectUpdateSchema = z.object({
+  name: z
+    .string({ required_error: 'Project name is required' })
+    .min(1, { message: 'Project name is required' })
+    .max(50, { message: 'Project name should not exceed 50 characters' }),
+  description: z.string().optional(),
+  tag: z
+    .array(z.string())
+    .max(5, { message: 'Maximum 5 tags allowed' })
+    .optional()
+    .default([])
+});

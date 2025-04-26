@@ -24,6 +24,7 @@ type Props = {
   btnText?: string;
   isLoading: boolean;
   disable?: boolean;
+  isIconBtn: boolean;
 };
 
 const DeleteConfirmationDialog = ({
@@ -34,7 +35,8 @@ const DeleteConfirmationDialog = ({
   isLoading,
   open,
   setOpen,
-  disable = false
+  disable = false,
+  isIconBtn = false
 }: Props) => {
   return (
     <Dialog
@@ -43,13 +45,23 @@ const DeleteConfirmationDialog = ({
       onOpenChange={setOpen}
     >
       <DialogTrigger asChild>
-        <Button
-          disabled={disable}
-          className='dark:bg-background flex w-full justify-start rounded-sm bg-white !px-2 !py-1 text-red-500 hover:cursor-pointer hover:bg-red-100 dark:text-red-800 dark:hover:bg-red-950/90'
-        >
-          <Trash />
-          {btnText}
-        </Button>
+        {isIconBtn ? (
+          <Button
+            size='icon'
+            disabled={disable}
+            className='cursor-pointer bg-red-500 text-white hover:bg-red-600'
+          >
+            <Trash />
+          </Button>
+        ) : (
+          <Button
+            disabled={disable}
+            className='dark:bg-background flex w-full justify-start rounded-sm bg-white !px-2 !py-1 text-red-500 hover:cursor-pointer hover:bg-red-100 dark:text-red-800 dark:hover:bg-red-950/90'
+          >
+            <Trash />
+            {btnText}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader className='flex flex-col items-center'>
