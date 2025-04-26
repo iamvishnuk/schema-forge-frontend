@@ -578,7 +578,7 @@ const SchemaEditor = ({ id }: Props) => {
 
   return (
     <div
-      className='relative flex h-[calc(100vh-220px)] w-full rounded-lg border shadow-md'
+      className='relative flex h-[calc(100vh-155px)] w-full rounded-lg border shadow-md'
       ref={wrapperRef}
     >
       <div

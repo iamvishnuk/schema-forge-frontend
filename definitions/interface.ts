@@ -157,3 +157,7 @@ export interface IProject {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IProjectWithTeamDetails extends Omit<IProject, 'teamIds'> {
+  teamIds: Array<Partial<ITeam>>;
+}
