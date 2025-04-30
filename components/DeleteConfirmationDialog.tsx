@@ -3,6 +3,8 @@
 import { CircleAlert, Loader, Trash } from 'lucide-react';
 import React from 'react';
 
+import { cn } from '@/lib/utils';
+
 import { Button } from './ui/button';
 import {
   Dialog,
@@ -24,7 +26,8 @@ type Props = {
   btnText?: string;
   isLoading: boolean;
   disable?: boolean;
-  isIconBtn: boolean;
+  isIconBtn?: boolean;
+  btnClassName?: string;
 };
 
 const DeleteConfirmationDialog = ({
@@ -36,7 +39,8 @@ const DeleteConfirmationDialog = ({
   open,
   setOpen,
   disable = false,
-  isIconBtn = false
+  isIconBtn = false,
+  btnClassName = ''
 }: Props) => {
   return (
     <Dialog
@@ -49,14 +53,20 @@ const DeleteConfirmationDialog = ({
           <Button
             size='icon'
             disabled={disable}
-            className='cursor-pointer bg-red-500 text-white hover:bg-red-600'
+            className={cn(
+              'cursor-pointer bg-red-500 text-white hover:bg-red-600',
+              btnClassName
+            )}
           >
             <Trash />
           </Button>
         ) : (
           <Button
             disabled={disable}
-            className='dark:bg-background flex w-full justify-start rounded-sm bg-white !px-2 !py-1 text-red-500 hover:cursor-pointer hover:bg-red-100 dark:text-red-800 dark:hover:bg-red-950/90'
+            className={cn(
+              'dark:bg-background flex w-full justify-start rounded-sm bg-white !px-2 !py-1 text-red-500 hover:cursor-pointer hover:bg-red-100 dark:text-red-800 dark:hover:bg-red-950/90',
+              btnClassName
+            )}
           >
             <Trash />
             {btnText}

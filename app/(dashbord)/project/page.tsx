@@ -1,18 +1,11 @@
 'use client';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import {
-  CalendarDays,
-  Edit,
-  MoreHorizontal,
-  SquareArrowOutUpRight
-} from 'lucide-react';
+import { CalendarDays, SquareArrowOutUpRight } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { toast } from 'sonner';
 
-import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -22,17 +15,10 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { ProjectDataBaseTypeEnum } from '@/definitions/enums';
-import { IProject } from '@/definitions/interface';
 import { MongoDBIcon, MySQLIcon, PostgreSQLIcon, SQLiteIcon } from '@/icons';
-import { deleteProjectMutationFn, getProjectsMutationFn } from '@/lib/api';
+import { getProjectsMutationFn } from '@/lib/api';
 
 import ProjectFrom from './_components/ProjectFrom';
 
@@ -40,11 +26,8 @@ type Props = {};
 
 const ProjectPage = ({}: Props) => {
   const [open, setOpen] = useState(false);
-  const [projectData, setProjectData] = useState<IProject | null>(null);
-  const [isEdit, setIsEdit] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const { data, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ['get-projects'],
     queryFn: getProjectsMutationFn
   });
@@ -52,24 +35,6 @@ const ProjectPage = ({}: Props) => {
   const projects = data?.data;
 
   const handleOpen = (value: boolean) => setOpen(value);
-  const handleShowConfirmation = (value: boolean) => setShowConfirmation(value);
-
-  const { mutate, isPending: isDeletePending } = useMutation({
-    mutationFn: deleteProjectMutationFn
-  });
-
-  const handleDeleteProject = async (projectId: string) => {
-    mutate(projectId, {
-      onSuccess: () => {
-        toast.success('Success', {
-          description: 'Project deleted successfully'
-        });
-        refetch();
-        handleShowConfirmation(false);
-      },
-      onError: (error) => toast.error('Error', { description: error.message })
-    });
-  };
 
   return (
     <div className=''>
@@ -84,8 +49,8 @@ const ProjectPage = ({}: Props) => {
           open={open}
           setOpen={handleOpen}
           btnText='Create Project'
-          isEdit={isEdit}
-          projectData={projectData}
+          isEdit={false} // for edit functionality
+          projectData={null} // for edit functionality
         />
       </div>
       <Separator className='my-4' />
@@ -96,60 +61,17 @@ const ProjectPage = ({}: Props) => {
             key={project._id}
             className='shadow-lg transition-all duration-200 hover:shadow-xl'
           >
-            <CardHeader className='pb-3'>
+            <CardHeader className=''>
               <div className='flex items-start justify-between'>
                 <CardTitle className='text-xl font-bold'>
                   {project.name}
                 </CardTitle>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-8 w-8'
-                    >
-                      <MoreHorizontal className='h-4 w-4' />
-                      <span className='sr-only'>Actions</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end'>
-                    <DropdownMenuItem>
-                      <Link
-                        href={`/project/${project._id}`}
-                        className='flex w-full gap-2'
-                      >
-                        <SquareArrowOutUpRight />
-                        Open Project
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setIsEdit(true);
-                        setProjectData(project);
-                        setOpen(true);
-                      }}
-                    >
-                      <Edit />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className='text-destructive'
-                      asChild
-                    >
-                      <DeleteConfirmationDialog
-                        open={showConfirmation}
-                        setOpen={handleShowConfirmation}
-                        confirmFn={() => handleDeleteProject(project._id)}
-                        isLoading={isDeletePending}
-                        description='Are you sure you want to delete this project? This action cannot be undone.'
-                      />
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
-              <CardDescription>{project.description}</CardDescription>
+              <CardDescription className='line-clamp-2 h-11'>
+                {project.description}
+              </CardDescription>
             </CardHeader>
-            <CardContent className='pb-2'>
+            <CardContent className=''>
               <div className='text-muted-foreground mb-4 flex items-center justify-between gap-4 text-sm'>
                 <div className='flex items-center'>
                   <CalendarDays className='mr-1 h-4 w-4' />
@@ -204,7 +126,7 @@ const ProjectPage = ({}: Props) => {
                 </Button>
               </div> */}
             </CardContent>
-            <CardFooter className='pt-2'>
+            <CardFooter className=''>
               <Link
                 href={`/project/${project._id}`}
                 className='w-full'
