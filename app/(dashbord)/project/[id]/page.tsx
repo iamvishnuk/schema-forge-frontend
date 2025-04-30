@@ -3,8 +3,8 @@ import React from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import ProjectAssociatedMembers from '../_components/ProjectAssociatedMembers';
 import ProjectSetting from '../_components/ProjectSetting';
-import ProjectTeamAndAssociatedMembers from '../_components/ProjectTeamAndAssociatedMembers';
 import SchemaEditor from '../_components/react-flow/schema-editor';
 
 type Props = {
@@ -42,7 +42,7 @@ const page = async ({ params }: Props) => {
           <SchemaEditor id={id} />
         </TabsContent>
         <TabsContent value='team'>
-          <ProjectTeamAndAssociatedMembers id={id} />
+          <ProjectAssociatedMembers id={id} />
         </TabsContent>
         <TabsContent value='settings'>
           <ProjectSetting id={id} />

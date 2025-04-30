@@ -8,7 +8,7 @@ import {
   ILogin,
   ILoginResponse,
   IProject,
-  IProjectWithTeamDetails,
+  IProjectMember,
   IRegister,
   IResetPassword,
   ISession,
@@ -135,11 +135,6 @@ export const updateProjectMutationFn = async (
 export const deleteProjectMutationFn = async (projectId: string) =>
   await API.delete(`/project/delete/${projectId}`);
 
-export const getProjectAssociatedTeamAndMembersMutationFn = async (
-  projectId: string
-): Promise<APIResponse<IProjectWithTeamDetails[]>> =>
-  await API.get(`/project/teams-and-members/${projectId}`);
-
 export const addTeamToProjectMutationFn = async (data: {
   projectId: string;
   teamIds: string[];
@@ -154,3 +149,18 @@ export const removeTeamFromProjectMutationFn = async (data: {
 export const getProjectDetailsByIdMutationFn = async (
   id: string
 ): Promise<APIResponse<IProject>> => await API.get(`/project/${id}`);
+
+export const getProjectAssociatedMembersMutationFn = async (
+  projectId: string
+): Promise<APIResponse<{ project: IProject; members: string[] }>> =>
+  await API.get(`/project/members/${projectId}`);
+
+export const acceptProjectInvitationMutationFn = async (
+  token: string
+): Promise<APIResponse<IProjectMember>> =>
+  await API.post('/project/accept-invite', { token });
+
+export const inviteProjectMemberMutationFn = async (data: {
+  emails: string[];
+  projectId: string;
+}) => await API.post('/project/invite', data);

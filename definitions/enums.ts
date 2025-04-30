@@ -26,3 +26,8 @@ export enum ProjectDataBaseTypeEnum {
   MONGODB = 'mongodb',
   SQLITE = 'sqlite'
 }
+
+export enum ProjectMemberRoleEnum {
+  EDITOR = 'editor',
+  VIEWER = 'viewer'
+}

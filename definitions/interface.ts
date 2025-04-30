@@ -2,6 +2,7 @@ import {
   InviteTeamRoleEnum,
   MemberStatusEnum,
   ProjectDataBaseTypeEnum,
+  ProjectMemberRoleEnum,
   TeamRoleEnum
 } from './enums';
 
@@ -153,11 +154,18 @@ export interface IProject {
   tag: string[];
   connectionString: string;
   createdBy: string;
+  inviteToken: string;
   _id: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface IProjectWithTeamDetails extends Omit<IProject, 'teamIds'> {
-  teamIds: Array<Partial<ITeam>>;
+export interface IProjectMember {
+  _id: string | unknown;
+  userId: string;
+  projectId: string;
+  role: ProjectMemberRoleEnum;
+  joinedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -6,7 +6,6 @@ import {
   Maximize,
   Minimize,
   PanelLeft,
-  Save,
   Trash2
 } from 'lucide-react';
 import React, { useCallback, useEffect } from 'react';
@@ -198,18 +197,6 @@ const EditorPanel = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent>Schema</TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant='outline'
-              size='icon'
-            >
-              <Save className='h-4 w-4' />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Save</TooltipContent>
         </Tooltip>
 
         <Tooltip>

@@ -3,11 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, Edit, X } from 'lucide-react';
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
@@ -22,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import MultipleSelector from '@/components/ui/multiple-selector';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  deleteProjectMutationFn,
   getProjectDetailsByIdMutationFn,
   updateProjectMutationFn
 } from '@/lib/api';
@@ -31,10 +34,12 @@ type Props = { id: string };
 
 const ProjectSetting = ({ id }: Props) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
 
-  const { data } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ['project-details', id],
     queryFn: () => getProjectDetailsByIdMutationFn(id)
   });
@@ -44,17 +49,29 @@ const ProjectSetting = ({ id }: Props) => {
   const form = useForm<z.infer<typeof ProjectUpdateSchema>>({
     resolver: zodResolver(ProjectUpdateSchema),
     defaultValues: {
-      name: projectDetails?.name || '',
-      description: projectDetails?.description || '',
-      tag: projectDetails?.tag || []
+      name: '',
+      description: '',
+      tag: []
     }
   });
 
-  const updateProjectMutation = useMutation({
-    mutationFn: updateProjectMutationFn,
-    onSuccess: () => {
-      setIsEditing(false);
+  // Update form values when project details are fetched
+  useEffect(() => {
+    if (isSuccess && projectDetails) {
+      form.reset({
+        name: projectDetails.name || '',
+        description: projectDetails.description || '',
+        tag: projectDetails.tag || []
+      });
     }
+  }, [form, projectDetails, isSuccess]);
+
+  const updateProjectMutation = useMutation({
+    mutationFn: updateProjectMutationFn
+  });
+
+  const deleteProjectMutation = useMutation({
+    mutationFn: deleteProjectMutationFn
   });
 
   const onSubmit = (values: z.infer<typeof ProjectUpdateSchema>) => {
@@ -81,13 +98,32 @@ const ProjectSetting = ({ id }: Props) => {
     );
   };
 
+  const toggleConfirmationDialog = (value: boolean) =>
+    setShowConfirmationDialog(value);
+
+  const handleDeleteProject = async (projectId: string) => {
+    deleteProjectMutation.mutate(projectId, {
+      onSuccess: () => {
+        toast.success('Success', {
+          description: 'Project deleted successfully'
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-projects']
+        });
+        router.push('/project');
+        toggleConfirmationDialog(false);
+      },
+      onError: (error) => toast.error('Error', { description: error.message })
+    });
+  };
+
   return (
     <div>
       <Card className='mt-3'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader>
-              <div className='flex items-center justify-between'>
+              <div className='mb-3 flex items-center justify-between border-b pb-3'>
                 <h2 className='text-xl font-bold'>Project Details</h2>
                 <div className='flex items-center gap-2'>
                   {isEditing && (
@@ -185,6 +221,31 @@ const ProjectSetting = ({ id }: Props) => {
           </form>
         </Form>
       </Card>
+
+      <div className='mt-8'>
+        <h2 className='text-xl font-bold'>Danger Zone</h2>
+        <Card className='mt-2 border-red-500'>
+          <CardContent>
+            <div className='flex items-center justify-between'>
+              <div>
+                <h3 className='font-bold'>Delete this Project</h3>
+                <h3 className='text-sm'>
+                  Once you delete a Project, there is no going back. Please be
+                  certain.
+                </h3>
+              </div>
+              <DeleteConfirmationDialog
+                btnClassName='border border-red-500 bg-transparent text-red-500 hover:cursor-pointer hover:bg-red-500 hover:text-white dark:border-red-500 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white w-fit'
+                open={showConfirmationDialog}
+                setOpen={toggleConfirmationDialog}
+                confirmFn={() => handleDeleteProject(id)}
+                isLoading={deleteProjectMutation.isPending}
+                btnText='Delete This Project'
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
