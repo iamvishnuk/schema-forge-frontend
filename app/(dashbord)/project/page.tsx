@@ -63,7 +63,7 @@ const ProjectPage = ({}: Props) => {
           >
             <CardHeader className=''>
               <div className='flex items-start justify-between'>
-                <CardTitle className='text-xl font-bold'>
+                <CardTitle className='line-clamp-1 text-xl font-bold'>
                   {project.name}
                 </CardTitle>
               </div>

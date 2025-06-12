@@ -3,6 +3,7 @@ import {
   MemberStatusEnum,
   ProjectDataBaseTypeEnum,
   ProjectMemberRoleEnum,
+  ProjectTemplateEnum,
   TeamRoleEnum
 } from './enums';
 
@@ -141,7 +142,6 @@ export interface ICreateProject {
   name: string;
   description?: string;
   databaseType: ProjectDataBaseTypeEnum;
-  teamIds: string[];
   connectionString?: string;
   tag: string[];
 }
@@ -149,7 +149,7 @@ export interface ICreateProject {
 export interface IProject {
   name: string;
   description: string;
-  teamIds: string[];
+  templateType: ProjectTemplateEnum;
   databaseType: ProjectDataBaseTypeEnum;
   tag: string[];
   connectionString: string;
@@ -161,11 +161,15 @@ export interface IProject {
 }
 
 export interface IProjectMember {
-  _id: string | unknown;
+  _id: string;
   userId: string;
   projectId: string;
   role: ProjectMemberRoleEnum;
   joinedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IProjectMemberWithUser extends Omit<IProjectMember, 'userId'> {
+  userId: Pick<IUser, '_id' | 'name' | 'email'>;
 }

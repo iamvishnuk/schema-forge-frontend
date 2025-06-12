@@ -1,3 +1,5 @@
+import { ProjectMemberRoleEnum } from '@/definitions/enums';
+
 export const TEAM_ROLES = [
   { value: 'owner', label: 'Owner' },
   { value: 'admin', label: 'Admin' },
@@ -10,4 +12,13 @@ export const TEAM_MEMBER_STATUS = [
   { value: 'pending', label: 'Pending' },
   { value: 'invited', label: 'Invited' },
   { value: 'suspended', label: 'Suspended' }
+];
+
+export const PROJECT_MEMBER_ROLES: {
+  value: ProjectMemberRoleEnum;
+  label: string;
+}[] = [
+  { value: ProjectMemberRoleEnum.OWNER, label: 'Owner' },
+  { value: ProjectMemberRoleEnum.EDITOR, label: 'Editor' },
+  { value: ProjectMemberRoleEnum.VIEWER, label: 'Viewer' }
 ];

@@ -17,7 +17,10 @@
 - [] Fix multiple cursor position issue
 - [x] Fix socket issue while switching the tab
 - [x] Panel for changing the property of the edge like (color, animation, type)
-- [] Invite Members to the project using links
+- [x] Invite Members to the project using links
 - [] Display all the collection in the project
 - [] Code generation
 - [] Set short cut key according to the user preference
+- [x] Integrate Template listing api
+- [x] update the template
+- [x] List all the Project associate members

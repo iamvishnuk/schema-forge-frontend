@@ -349,7 +349,16 @@ const EditorSidebar = ({
 
   const onSubmit = (data: z.infer<typeof SchemaPropertyValidation>) => {
     addFieldToNode(data);
-    form.reset();
+    form.reset({
+      name: '',
+      type: '',
+      required: false,
+      isPrimary: false,
+      isUnique: false,
+      index: false,
+      ref: '',
+      arrayType: undefined
+    });
   };
 
   return (
