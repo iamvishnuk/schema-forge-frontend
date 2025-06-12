@@ -54,7 +54,7 @@ const DeleteConfirmationDialog = ({
             size='icon'
             disabled={disable}
             className={cn(
-              'cursor-pointer bg-red-500 text-white hover:bg-red-600',
+              'cursor-pointer bg-red-500 text-white hover:bg-red-600 disabled:cursor-not-allowed',
               btnClassName
             )}
           >

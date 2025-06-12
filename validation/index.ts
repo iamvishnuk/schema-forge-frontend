@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import {
   InviteTeamRoleEnum,
-  ProjectDataBaseTypeEnum
+  ProjectDataBaseTypeEnum,
+  ProjectTemplateEnum
 } from '@/definitions/enums';
 
 export const RegisterSchema = z
@@ -97,10 +98,15 @@ export const CreateProjectSchema = z
       .min(1, { message: 'Project name is required' })
       .max(50, { message: 'Project name should not exceed 50 characters' }),
     description: z.string().optional(),
-    teamIds: z.array(z.string()).optional().default([]),
     databaseType: z.nativeEnum(ProjectDataBaseTypeEnum, {
       message: 'Database type is required'
     }),
+    templateType: z
+      .nativeEnum(ProjectTemplateEnum, {
+        message: 'Invalid template type'
+      })
+      .optional()
+      .default(ProjectTemplateEnum.NONE),
     tag: z
       .array(z.string())
       .max(5, { message: 'Maximum 5 tags allowed' })

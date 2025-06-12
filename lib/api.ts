@@ -1,3 +1,4 @@
+import { ProjectMemberRoleEnum } from '@/definitions/enums';
 import {
   APIResponse,
   IChangeTeamMemberRole,
@@ -9,6 +10,7 @@ import {
   ILoginResponse,
   IProject,
   IProjectMember,
+  IProjectMemberWithUser,
   IRegister,
   IResetPassword,
   ISession,
@@ -152,8 +154,9 @@ export const getProjectDetailsByIdMutationFn = async (
 
 export const getProjectAssociatedMembersMutationFn = async (
   projectId: string
-): Promise<APIResponse<{ project: IProject; members: string[] }>> =>
-  await API.get(`/project/members/${projectId}`);
+): Promise<
+  APIResponse<{ project: IProject; members: IProjectMemberWithUser[] }>
+> => await API.get(`/project/members/${projectId}`);
 
 export const acceptProjectInvitationMutationFn = async (
   token: string
@@ -164,3 +167,14 @@ export const inviteProjectMemberMutationFn = async (data: {
   emails: string[];
   projectId: string;
 }) => await API.post('/project/invite', data);
+
+export const changeProjectMemberRoleMutationFn = async (data: {
+  id: string;
+  role: ProjectMemberRoleEnum;
+}): Promise<APIResponse<IProjectMember>> =>
+  await API.put('/project/member/change-role', data);
+
+export const leaveOrRemoveProjectMemberMutationFn = async (
+  id: string
+): Promise<APIResponse<{ isSelf: boolean }>> =>
+  await API.delete(`/project/member/remove/${id}`);

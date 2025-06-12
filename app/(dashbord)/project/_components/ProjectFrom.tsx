@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader, PlusCircle } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -27,7 +27,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import MultipleSelector from '@/components/ui/multiple-selector';
 import {
   Select,
   SelectContent,
@@ -36,12 +36,9 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { ProjectTemplateEnum } from '@/definitions/enums';
 import { IProject } from '@/definitions/interface';
-import {
-  createProjectMutationFn,
-  getUserCreatedTeamsMutationFn,
-  updateProjectMutationFn
-} from '@/lib/api';
+import { createProjectMutationFn, updateProjectMutationFn } from '@/lib/api';
 import { CreateProjectSchema } from '@/validation';
 
 type Props = {
@@ -60,6 +57,18 @@ const DATABASE_TYPE_OPTIONS = [
   { label: 'SQLite', value: 'sqlite' }
 ];
 
+const PROJECT_TEMPLATES_OPTIONS: {
+  label: string;
+  value: ProjectTemplateEnum;
+}[] = [
+  { label: 'None', value: ProjectTemplateEnum.NONE },
+  { label: 'Blog', value: ProjectTemplateEnum.BLOG },
+  { label: 'E-Commerce', value: ProjectTemplateEnum.ECOMMERCE },
+  { label: 'CRM', value: ProjectTemplateEnum.CRM },
+  { label: 'Social Network', value: ProjectTemplateEnum.SOCIAL_NETWORK },
+  { label: 'Task Manger', value: ProjectTemplateEnum.TASK_MANAGER }
+];
+
 const ProjectFrom = ({
   open,
   setOpen,
@@ -68,20 +77,6 @@ const ProjectFrom = ({
   projectData
 }: Props) => {
   const queryClient = useQueryClient();
-
-  const { data } = useQuery({
-    queryKey: ['user-created-teams'],
-    queryFn: getUserCreatedTeamsMutationFn,
-    enabled: open
-  });
-
-  const TEAM_OPTIONS: Option[] =
-    data?.data.map((team) => {
-      return {
-        label: team.name,
-        value: team._id
-      };
-    }) || [];
 
   const createProjectMutation = useMutation({
     mutationFn: createProjectMutationFn
@@ -99,7 +94,7 @@ const ProjectFrom = ({
       databaseType: undefined,
       tag: [],
       connectionString: '',
-      teamIds: []
+      templateType: ProjectTemplateEnum.NONE
     }
   });
 
@@ -112,7 +107,7 @@ const ProjectFrom = ({
         databaseType: projectData?.databaseType,
         connectionString: projectData?.connectionString,
         tag: projectData?.tag,
-        teamIds: projectData?.teamIds
+        templateType: projectData?.templateType
       });
     } else {
       form.reset({
@@ -121,7 +116,7 @@ const ProjectFrom = ({
         databaseType: undefined,
         tag: [],
         connectionString: '',
-        teamIds: []
+        templateType: ProjectTemplateEnum.NONE
       });
     }
   }, [projectData, form]);
@@ -230,23 +225,31 @@ const ProjectFrom = ({
             />
             <FormField
               control={form.control}
-              name='teamIds'
+              name='templateType'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Team</FormLabel>
-                  <FormControl>
-                    <MultipleSelector
-                      onChange={(value) => {
-                        field.onChange(value.map((item) => item.value));
-                      }}
-                      placeholder='Select teams'
-                      options={TEAM_OPTIONS}
-                      disabled={createProjectMutation.isPending}
-                      value={TEAM_OPTIONS.filter((option) => {
-                        return form.getValues('teamIds').includes(option.value);
-                      })}
-                    />
-                  </FormControl>
+                  <FormLabel>Project Template</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={createProjectMutation.isPending}
+                  >
+                    <FormControl>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Select project template (Optional)' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {PROJECT_TEMPLATES_OPTIONS.map((template, index) => (
+                        <SelectItem
+                          key={index}
+                          value={template.value}
+                        >
+                          {template.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormItem>
               )}
             />

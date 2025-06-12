@@ -2,8 +2,11 @@
 
 import { useQuery } from '@tanstack/react-query';
 
+import { DataTable } from '@/components/data-table/data-table';
+import { Separator } from '@/components/ui/separator';
 import { getProjectAssociatedMembersMutationFn } from '@/lib/api';
 
+import { projectMemberColumns } from './columns';
 import InviteProjectMembers from './InviteProjectMembers';
 
 type Props = {
@@ -16,16 +19,22 @@ const ProjectTeamAndAssociatedMembers = ({ id }: Props) => {
     queryFn: () => getProjectAssociatedMembersMutationFn(id)
   });
 
-  const projectAssociatedMembers = data?.data;
+  const project = data?.data?.project;
+  const members = data?.data?.members;
 
   return (
     <div>
       <div className='mb-3 flex items-center justify-between'>
-        <h2 className='mb-3 text-xl font-bold'>Associated Member</h2>
+        <h2 className='text-xl font-bold'>Associated Member</h2>
       </div>
       <InviteProjectMembers
         projectId={id}
-        inviteToken={projectAssociatedMembers?.project?.inviteToken!}
+        inviteToken={project?.inviteToken!}
+      />
+      <Separator className='mt-4' />
+      <DataTable
+        columns={projectMemberColumns}
+        data={members || []}
       />
     </div>
   );

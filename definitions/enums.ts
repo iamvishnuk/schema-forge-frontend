@@ -28,6 +28,16 @@ export enum ProjectDataBaseTypeEnum {
 }
 
 export enum ProjectMemberRoleEnum {
+  OWNER = 'owner',
   EDITOR = 'editor',
   VIEWER = 'viewer'
+}
+
+export enum ProjectTemplateEnum {
+  NONE = 'none',
+  BLOG = 'blog',
+  ECOMMERCE = 'ecommerce',
+  CRM = 'crm',
+  SOCIAL_NETWORK = 'social_network',
+  TASK_MANAGER = 'task_manager'
 }
