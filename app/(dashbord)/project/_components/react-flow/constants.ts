@@ -14,6 +14,40 @@ export const MONGO_DATA_TYPES = [
   { label: 'BigInt', value: 'BigInt' }
 ] as const;
 
+export const POSTGRESQL_DATA_TYPES = [
+  { label: 'VARCHAR', value: 'VARCHAR' },
+  { label: 'TEXT', value: 'TEXT' },
+  { label: 'CHAR', value: 'CHAR' },
+  { label: 'INTEGER', value: 'INTEGER' },
+  { label: 'BIGINT', value: 'BIGINT' },
+  { label: 'SMALLINT', value: 'SMALLINT' },
+  { label: 'DECIMAL', value: 'DECIMAL' },
+  { label: 'NUMERIC', value: 'NUMERIC' },
+  { label: 'REAL', value: 'REAL' },
+  { label: 'DOUBLE PRECISION', value: 'DOUBLE PRECISION' },
+  { label: 'SERIAL', value: 'SERIAL' },
+  { label: 'BIGSERIAL', value: 'BIGSERIAL' },
+  { label: 'BOOLEAN', value: 'BOOLEAN' },
+  { label: 'DATE', value: 'DATE' },
+  { label: 'TIME', value: 'TIME' },
+  { label: 'TIMESTAMP', value: 'TIMESTAMP' },
+  { label: 'TIMESTAMPTZ', value: 'TIMESTAMPTZ' },
+  { label: 'INTERVAL', value: 'INTERVAL' },
+  { label: 'UUID', value: 'UUID' },
+  { label: 'JSON', value: 'JSON' },
+  { label: 'JSONB', value: 'JSONB' },
+  { label: 'ARRAY', value: 'ARRAY' },
+  { label: 'BYTEA', value: 'BYTEA' },
+  { label: 'INET', value: 'INET' },
+  { label: 'CIDR', value: 'CIDR' },
+  { label: 'MACADDR', value: 'MACADDR' },
+  { label: 'POINT', value: 'POINT' },
+  { label: 'LINE', value: 'LINE' },
+  { label: 'POLYGON', value: 'POLYGON' },
+  { label: 'CIRCLE', value: 'CIRCLE' },
+  { label: 'MONEY', value: 'MONEY' }
+] as const;
+
 export const MONGO_COMMON_SCHEMA_OPTIONS = [
   { label: 'Required', value: 'required', type: 'boolean', shortForm: 'R' },
   { label: 'Unique', value: 'unique', type: 'boolean', shortForm: 'U' },

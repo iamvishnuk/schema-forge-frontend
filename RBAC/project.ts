@@ -5,9 +5,9 @@ export const PROJECT_ROLE_PERMISSIONS = {
     'project:design:view',
     'project:design:edit',
     'project:design:delete',
-    'project:collections:view',
-    'project:collections:edit',
-    'project:collections:delete',
+    'project:script:view',
+    'project:script:edit',
+    'project:script:delete',
     'project:settings:view',
     'project:settings:edit',
     'project:settings:delete',
@@ -19,14 +19,11 @@ export const PROJECT_ROLE_PERMISSIONS = {
     'project:design:view',
     'project:design:edit',
     'project:design:delete',
-    'project:collections:view',
-    'project:collections:edit',
-    'project:collections:delete'
+    'project:script:view',
+    'project:script:edit',
+    'project:script:delete'
   ],
-  [ProjectMemberRoleEnum.VIEWER]: [
-    'project:design:view',
-    'project:collections:view'
-  ]
+  [ProjectMemberRoleEnum.VIEWER]: ['project:design:view', 'project:script:view']
 } as const;
 
 export type ProjectPermissionType =

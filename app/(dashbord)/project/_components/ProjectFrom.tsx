@@ -39,6 +39,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { ProjectTemplateEnum } from '@/definitions/enums';
 import { IProject } from '@/definitions/interface';
 import { createProjectMutationFn, updateProjectMutationFn } from '@/lib/api';
+import {
+  DATABASE_TYPE_OPTIONS,
+  PROJECT_TEMPLATES_OPTIONS
+} from '@/lib/constant';
 import { CreateProjectSchema } from '@/validation';
 
 type Props = {
@@ -49,25 +53,6 @@ type Props = {
   // eslint-disable-next-line no-unused-vars
   setOpen: (value: boolean) => void;
 };
-
-const DATABASE_TYPE_OPTIONS = [
-  { label: 'MySQL', value: 'mysql' },
-  { label: 'PostgreSQL', value: 'postgresql' },
-  { label: 'MongoDB', value: 'mongodb' },
-  { label: 'SQLite', value: 'sqlite' }
-];
-
-const PROJECT_TEMPLATES_OPTIONS: {
-  label: string;
-  value: ProjectTemplateEnum;
-}[] = [
-  { label: 'None', value: ProjectTemplateEnum.NONE },
-  { label: 'Blog', value: ProjectTemplateEnum.BLOG },
-  { label: 'E-Commerce', value: ProjectTemplateEnum.ECOMMERCE },
-  { label: 'CRM', value: ProjectTemplateEnum.CRM },
-  { label: 'Social Network', value: ProjectTemplateEnum.SOCIAL_NETWORK },
-  { label: 'Task Manger', value: ProjectTemplateEnum.TASK_MANAGER }
-];
 
 const ProjectFrom = ({
   open,
@@ -276,6 +261,7 @@ const ProjectFrom = ({
                         <SelectItem
                           key={index}
                           value={type.value}
+                          disabled={type.disabled}
                         >
                           {type.label}
                         </SelectItem>

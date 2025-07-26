@@ -19,8 +19,13 @@
 - [x] Panel for changing the property of the edge like (color, animation, type)
 - [x] Invite Members to the project using links
 - [] Display all the collection in the project
-- [] Code generation
+- [x] Code generation
 - [] Set short cut key according to the user preference
 - [x] Integrate Template listing api
 - [x] update the template
 - [x] List all the Project associate members
+- [] Add support for more database like PostgreSQL, sql lite and more
+- [] Fix reference issue in Nodes it not showing properly
+- [] Add DND function on schema fields
+- [] Add versioning for the design
+- [] Fix the conflict while editing the same diagram by multiple users (operation transform)
