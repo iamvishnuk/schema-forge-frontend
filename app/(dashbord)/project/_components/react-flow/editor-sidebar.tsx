@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Edge, MarkerType, type Node } from '@xyflow/react';
-import { FileCode, Key, Trash2, Workflow } from 'lucide-react';
+import { Key, Trash2, Workflow } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
@@ -367,20 +367,13 @@ const EditorSidebar = ({
         defaultValue='schemaDetails'
         className='flex h-full flex-col'
       >
-        <TabsList className='grid h-10 w-full grid-cols-2 gap-2'>
+        <TabsList className='h-10 w-full'>
           <TabsTrigger
             value='schemaDetails'
             className='w-full'
           >
             <Workflow />
             Schema Details
-          </TabsTrigger>
-          <TabsTrigger
-            value='script'
-            className='w-full'
-          >
-            <FileCode />
-            Script
           </TabsTrigger>
         </TabsList>
 
@@ -643,17 +636,6 @@ const EditorSidebar = ({
               </p>
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent
-          value='script'
-          className='flex-1 overflow-y-auto'
-        >
-          <div>
-            <p className='mt-10 text-center italic'>
-              Script Generation is coming soon!
-            </p>
-          </div>
         </TabsContent>
       </Tabs>
     </div>

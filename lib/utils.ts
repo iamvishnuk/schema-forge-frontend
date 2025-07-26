@@ -2,6 +2,10 @@ import { Node, XYPosition } from '@xyflow/react';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+import { TDatabaseTypeValue } from '@/definitions/type';
+
+import { MONGO_DB_ORM_OPTIONS, POSTGRESQL_ORM_OPTIONS } from './constant';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -133,4 +137,14 @@ export const calculateXYPosition = (nodes: Node[]): XYPosition => {
     x: gridX * gridCellWidth + Math.random() * 20,
     y: gridY * gridCellHeight + Math.random() * 20
   };
+};
+
+// Create a mapping of database types to their ORM options
+const DB_ORM_MAPPING = {
+  mongodb: MONGO_DB_ORM_OPTIONS,
+  postgresql: POSTGRESQL_ORM_OPTIONS
+} as const;
+
+export const getORMTypeByDatabaseType = (dbType: TDatabaseTypeValue) => {
+  return DB_ORM_MAPPING[dbType as keyof typeof DB_ORM_MAPPING];
 };

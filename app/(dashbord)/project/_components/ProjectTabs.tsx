@@ -1,6 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { Layers, Settings, Users, Workflow } from 'lucide-react';
+import { FileCode, Settings, Users, Workflow } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import React, { useEffect } from 'react';
 
@@ -8,6 +8,7 @@ import ProjectDetailsLoader from '@/components/loaders/project-details-loader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext } from '@/context/auth-provider';
 import { setProjectRole } from '@/features/project/projectRoleSlice';
+import { setProject } from '@/features/project/projectSlice';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useAppSelector } from '@/hooks/useAppSelector';
 import { getProjectAssociatedMembersMutationFn } from '@/lib/api';
@@ -16,6 +17,7 @@ import { checkProjectRolePermission } from '@/RBAC/project';
 import ProjectTeamAndAssociatedMembers from './ProjectAssociatedMembers';
 import ProjectSetting from './ProjectSetting';
 import SchemaEditor from './react-flow/schema-editor';
+import ScriptGeneration from './ScriptGeneration';
 
 type Props = {
   projectId: string;
@@ -49,6 +51,9 @@ const ProjectTabs = ({ projectId }: Props) => {
           })
         );
       }
+      if (project) {
+        dispatch(setProject(project));
+      }
     }
   }, [project, members, user, dispatch, projectId]);
 
@@ -73,13 +78,10 @@ const ProjectTabs = ({ projectId }: Props) => {
           </TabsTrigger>
         )}
 
-        {checkProjectRolePermission(
-          projectRole,
-          'project:collections:view'
-        ) && (
-          <TabsTrigger value='collection'>
-            <Layers />
-            Collections
+        {checkProjectRolePermission(projectRole, 'project:script:view') && (
+          <TabsTrigger value='script'>
+            <FileCode />
+            Script
           </TabsTrigger>
         )}
 
@@ -106,6 +108,9 @@ const ProjectTabs = ({ projectId }: Props) => {
       </TabsContent>
       <TabsContent value='settings'>
         <ProjectSetting id={projectId} />
+      </TabsContent>
+      <TabsContent value='script'>
+        <ScriptGeneration projectId={projectId} />
       </TabsContent>
     </Tabs>
   );

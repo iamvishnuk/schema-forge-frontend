@@ -1,3 +1,4 @@
+import { CollectionNodeData } from '@/app/(dashbord)/project/_components/react-flow/nodes/collection-node';
 import { ProjectMemberRoleEnum } from '@/definitions/enums';
 import {
   APIResponse,
@@ -178,3 +179,21 @@ export const leaveOrRemoveProjectMemberMutationFn = async (
   id: string
 ): Promise<APIResponse<{ isSelf: boolean }>> =>
   await API.delete(`/project/member/remove/${id}`);
+
+export const getProjectTablesOrCollectionsMutationFn = async (
+  id: string
+): Promise<APIResponse<{ id: string; label: string }[]>> =>
+  await API.get(`/project/collections-or-tables/${id}`);
+
+export const getSelectCollectionOrTableMutationFn = async (
+  projectId: string,
+  nodeId: string
+): Promise<APIResponse<CollectionNodeData>> =>
+  await API.get(`/project/selected-collection-or-table/${projectId}/${nodeId}`);
+
+export const generateCodeMutationFn = async (
+  projectId: string,
+  nodeId: string,
+  ormType: string
+): Promise<APIResponse<string>> =>
+  await API.get(`/project/generate-code/${projectId}/${nodeId}/${ormType}`);

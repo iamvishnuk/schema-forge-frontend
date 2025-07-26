@@ -1,6 +1,6 @@
 'use client';
 
-import { Frame, LayoutDashboardIcon, Map, PieChart, Users } from 'lucide-react';
+import { Frame, LayoutDashboardIcon, Map, PieChart } from 'lucide-react';
 import * as React from 'react';
 
 import { NavMain } from '@/components/nav-main';
@@ -24,8 +24,8 @@ const data = {
   },
   navMain: [
     { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboardIcon },
-    { title: 'Team', url: '/team', icon: Users },
     { title: 'Projects', url: '/project', icon: Frame }
+    // { title: 'Team', url: '/team', icon: Users },
   ],
   projects: [
     {
